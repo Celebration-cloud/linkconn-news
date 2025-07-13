@@ -1,25 +1,28 @@
-'use client';
+"use client";
 
-import Link from "next/link";
 import DashboardNavbar from "./dashboard-navbar";
 import { usePathname } from "next/navigation";
 
-// Define routes where Navbar should be hidden
-const hiddenNavbarRoutes = [
+export default function AdminSection() {
+  const pathname = usePathname();
+
+  // Patterns or base paths to hide navbar
+  const hiddenPaths = [
     "/auth",
     "/login",
     "/onboarding",
-    "/admin/dashboard",
     "/admin/login",
-    "/admin",
+    "/admin", // exact match
   ];
 
-export default function AdminSection() {
-            
-    const pathname = usePathname();
-    const hideNavbar = hiddenNavbarRoutes.includes(pathname);
- 
- return (!hideNavbar && (
-     <DashboardNavbar />)
- );
+  const hiddenPrefixPaths = [
+    "/admin/dashboard",
+    "/admin/publish/edit", // handles /admin/publish/edit/anything
+  ];
+
+  const shouldHideNavbar =
+    hiddenPaths.includes(pathname) ||
+    hiddenPrefixPaths.some((prefix) => pathname.startsWith(prefix));
+
+  return !shouldHideNavbar ? <DashboardNavbar /> : null;
 }

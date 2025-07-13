@@ -1,9 +1,9 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useMemo } from "react";
 import clsx from "clsx";
 import { useSidebar } from "@/context/sidebar-context";
+import { siteConfig } from "@/config/site";
 
 const hiddenSidebarRoutes = ["/auth", "/login", "/onboarding", "/admin/login"];
 
@@ -13,36 +13,6 @@ export const DashboardSidebar = () => {
   const { isCollapsed } = useSidebar();
 
   const hideSidebar = hiddenSidebarRoutes.includes(pathname);
-
-  const menuItems = useMemo(
-    () => [
-      {
-        label: "Dashboard",
-        icon: "pi pi-chart-bar",
-        path: "/admin/dashboard",
-      },
-      {
-        label: "Create",
-        icon: "pi pi-pencil",
-        path: "/admin/publish",
-      },
-      {
-        label: "Content Library",
-        icon: "pi pi-book",
-        path: "/admin/content-library",
-      },
-      {
-        separator: true,
-      },
-      {
-        label: "Visit Site",
-        icon: "pi pi-home",
-        path: "/",
-        external: true,
-      },
-    ],
-    []
-  );
 
   const isActive = (path) => pathname === path;
 
@@ -57,7 +27,7 @@ export const DashboardSidebar = () => {
     >
       <nav className="py-16 text-sm">
         <ul className="flex flex-col gap-1">
-          {menuItems.map((item, index) =>
+          {siteConfig.dashboardSideBar.map((item, index) =>
             item.separator ? (
               <hr
                 key={`separator-${index}`}

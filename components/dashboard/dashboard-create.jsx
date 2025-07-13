@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
-import { Input, Checkbox } from "@heroui/react";
+import { useEffect, useState } from "react";
+import { Input, Checkbox, Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/react";
 import { Editor } from "primereact/editor";
 
 import "primereact/resources/themes/lara-light-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import CoverUpload from "./cover-upload";
+import { useSearchParams } from "next/navigation";
 
 export const metadata = {
   title: "Create Article - Linkcon News",
@@ -25,6 +26,15 @@ export default function DashboardCreate() {
   const [showPreview, setShowPreview] = useState(false);
   const [errors, setErrors] = useState({});
 
+  const searchParams = useSearchParams();
+    const articleId = searchParams.get("aid");
+  // Fetch article data if `articleId` is present
+  useEffect(() => {
+    if (articleId) {
+      // fetch logic here to load article details for editing
+    }
+  }, [articleId]);
+  
   const validateForm = () => {
     const newErrors = {};
     if (!title || title.trim().length < 5)
@@ -49,8 +59,24 @@ export default function DashboardCreate() {
         tags,
         content,
         isFeatured,
+        status: "published",
       });
       alert("Article published successfully!");
+    }
+  };
+  const handleSaveDraft = () => {
+    if (validateForm()) {
+    // Example logic: Save draft without full validation
+      console.log({
+        title,
+        summary,
+        category,
+        tags,
+        content,
+        isFeatured,
+        status: "Draft",
+      });
+      alert("Draft saved successfully!");
     }
   };
 
@@ -58,7 +84,7 @@ export default function DashboardCreate() {
     <div className="w-full max-w-5xl mx-auto space-y-8 py-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
-          Create New Article
+          {articleId ? "Edit Article" : "Create New Article"}
         </h1>
         <button
           onClick={() => setShowPreview(!showPreview)}
@@ -162,33 +188,66 @@ export default function DashboardCreate() {
         </div>
       </div>
 
-      <div className="flex justify-end">
-        <button
-          onClick={handlePublish}
+      <div className="flex justify-end gap-4">
+        <Button
+          onPress={handleSaveDraft}
+          className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-md text-sm font-medium"
+        >
+          Save as Draft
+        </Button>
+
+        <Button
+          onPress={handlePublish}
           className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md text-sm font-medium"
         >
           Publish Article
-        </button>
+        </Button>
       </div>
 
       {/* Preview */}
-      {showPreview && (
-        <div className="mt-10 p-6 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-md">
-          <h2 className="text-2xl font-semibold mb-2">{title}</h2>
-          <p className="text-gray-500 dark:text-gray-400 mb-4">{summary}</p>
-          {cover && (
-            <img
-              src={cover}
-              alt="Preview Cover"
-              className="w-full h-64 object-cover mb-4 rounded-md"
-            />
-          )}
-          <div
-            className="prose dark:prose-invert max-w-none"
-            dangerouslySetInnerHTML={{ __html: content }}
-          />
-        </div>
-      )}
+      <Modal
+        isOpen={showPreview}
+        onClose={() => setShowPreview(false)}
+        placement="center"
+        size="sm"
+        scrollBehavior="inside"
+        hideCloseButton
+        backdrop="blur"
+      >
+        <ModalContent>
+          <div className="w-[375px] h-[667px] bg-white dark:bg-gray-900 rounded-xl border border-gray-300 dark:border-gray-700 shadow-xl overflow-y-scroll scrollbar-hide">
+            <ModalHeader className="text-center text-lg font-semibold border-b border-gray-200 dark:border-gray-700">
+              📱 Article Preview
+            </ModalHeader>
+            <ModalBody className="overflow-y-auto p-4">
+              <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
+                {title}
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">{summary}</p>
+              {cover && (
+                <img
+                  src={cover}
+                  alt="Preview Cover"
+                  className="w-full h-48 object-cover rounded-md mb-4"
+                />
+              )}
+              <div
+                className="prose dark:prose-invert max-w-none text-sm"
+                dangerouslySetInnerHTML={{ __html: content }}
+              />
+            </ModalBody>
+            <ModalFooter className="flex justify-center">
+              <Button
+                variant="flat"
+                onPress={() => setShowPreview(false)}
+                className="text-blue-600 hover:underline"
+              >
+                Close Preview
+              </Button>
+            </ModalFooter>
+          </div>
+        </ModalContent>
+      </Modal>
     </div>
   );
 }

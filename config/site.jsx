@@ -45,6 +45,32 @@ export const siteConfig = {
       href: "/world",
     },
   ],
+  dashboardSideBar: [
+      {
+        label: "Dashboard",
+        icon: "pi pi-chart-bar",
+        path: "/admin/dashboard",
+      },
+      {
+        label: "Create",
+        icon: "pi pi-pencil",
+        path: "/admin/publish",
+      },
+      {
+        label: "Content Library",
+        icon: "pi pi-book",
+        path: "/admin/content-library",
+      },
+      {
+        separator: true,
+      },
+      {
+        label: "Visit Site",
+        icon: "pi pi-home",
+        path: "/",
+        external: true,
+      },
+    ],
   navMenuItems: [
     {
       label: "Dashboard",

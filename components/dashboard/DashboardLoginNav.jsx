@@ -11,26 +11,24 @@ export const DashboardLoginNav = () => {
   return (
     <Navbar
       maxWidth="full"
-      className="shadow-sm backdrop-blur-md flex-none sticky top-0 pb-10 z-50 bg-background"
+      className="shadow-sm backdrop-blur-md sticky top-0 z-50 bg-background pt-6"
     >
-      <div className="flex items-center justify-between w-full pt-10 md:px-8 lg:px-12">
         {/* Branding */}
-        <NavbarBrand>
+        <NavbarBrand className="pl-6">
           <Link href="/" className="flex items-center gap-2">
             <Image
               src={siteConfig.logo}
-              alt="Linkcon news logo"
-              width={100}
-              height={100}
+              alt="Linkcon News Logo"
+              width={208}
+              height={56}
               priority
-              className="w-52 h-14"
-              loading="eager"
+              className="w-52 h-14 object-contain"
             />
           </Link>
         </NavbarBrand>
 
-        {/* Nav actions */}
-        <NavbarContent justify="end" className="gap-4 flex *:items-center">
+        {/* Nav Actions */}
+        <NavbarContent justify="end" className="gap-4">
           <NavbarItem className="hidden sm:flex">
             <Link
               href="/admin"
@@ -39,6 +37,7 @@ export const DashboardLoginNav = () => {
               Login
             </Link>
           </NavbarItem>
+
           <NavbarItem>
             <Button
               as={Link}
@@ -50,18 +49,18 @@ export const DashboardLoginNav = () => {
               Get Started
             </Button>
           </NavbarItem>
+
           <NavbarItem>
             <ThemeSwitch />
           </NavbarItem>
         </NavbarContent>
-      </div>
 
-      {/* 🔽 Decorative underline bar INSIDE the Navbar */}
-      <div className="absolute -bottom-10 left-0 right-0 w-full h-0.5  ">
-        <div className="flex items-center w-full h-1">
-          <div className="w-1/6 bg-black h-full" />
-          <div className="w-1/6 bg-blue-500 h-full" />
-          <div className="w-2/3 bg-black h-full" />
+      {/* Decorative Line */}
+      <div className="absolute -bottom-0.5 left-0 w-full h-0.5">
+        <div className="flex h-full w-full">
+          <div className="w-1/12 bg-black dark:bg-white" />
+          <div className="w-1/6 bg-blue-500" />
+          <div className="w-3/4 bg-black dark:bg-white" />
         </div>
       </div>
     </Navbar>

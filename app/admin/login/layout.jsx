@@ -1,12 +1,10 @@
 import { DashboardLoginNav } from "@/components/dashboard/DashboardLoginNav";
-import { siteConfig } from "@/config/site";
 
-export default function Layout({ children }) {
-    
-    return (
-      <section className="flex flex-col items-center gap-4 w-full">
-        <DashboardLoginNav />
-        {children}
-      </section>
-    );
+export default function LoginLayout({ children }) {
+  return (
+    <section className="flex flex-col justify-between items-center gap-4 w-full min-h-screen bg-background text-foreground">
+      <DashboardLoginNav />
+      {children}
+    </section>
+  );
 }

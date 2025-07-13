@@ -1,6 +1,8 @@
 import DashboardNavbar from "@/components/dashboard/dashboard-navbar";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-side-bar";
+import { SpinnerLoading } from "@/components/spinner-loading";
 import { SidebarProvider } from "@/context/sidebar-context";
+import { Suspense } from "react";
 
 export default function Layout({ children }) {
   return (
@@ -10,13 +12,13 @@ export default function Layout({ children }) {
         <DashboardNavbar />
 
         {/* Content Area: Sidebar + Page */}
-        <div className="flex flex-1 overflow-hidden">
+        <div className="flex flex-1 gap-5 overflow-hidden">
           {/* Sidebar (fixed height) */}
           <DashboardSidebar />
 
           {/* Scrollable Page Content */}
-          <div className="flex-1 overflow-y-auto p-6 scrollbar-hide">
-            {children}
+          <div className="flex-1 overflow-y-auto scrollbar-hide">
+            <Suspense fallback={<SpinnerLoading />}>{children}</Suspense>
           </div>
         </div>
       </main>

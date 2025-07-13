@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-export default function admin({children}) {
+export default function admin() {
   const router = useRouter();
 
   useEffect(() => {

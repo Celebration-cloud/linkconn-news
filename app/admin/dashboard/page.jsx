@@ -13,7 +13,7 @@ export default function dashboard({children}) {
     {title: "Shares", count: 15, icon: "pi pi-share-alt"},
   ]
  return (
-   <div className="h-screen overflow-y-scroll scrollbar-hide min-w-[1024px] px-5">
+   <div className="h-screen overflow-y-scroll scrollbar-hide min-w-[1024px] pr-5">
      <div className="flex items-center justify-around mb-6 gap-5 bg-gray-100 px-10 py-5 rounded-sm shadow-md dark:bg-gray-800 ">
        {dashboard.map((item, index) => (
          <div key={index} className="flex items-center gap-4 mb-4">
