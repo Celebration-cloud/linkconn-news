@@ -13,7 +13,8 @@ const hiddenNavbarRoutes = [
   "/admin/login",
   "/admin",
   "/admin/publish",
-  "/admin/content-library"
+  "/admin/content-library",
+  "/admin/content-library/comments",
 ];
 
 export const LayoutWrapper = ({ children }) => {

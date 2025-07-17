@@ -1,92 +1,103 @@
+// DashboardCreate.jsx - with React Hook Form integration
+
 "use client";
 
+import { useForm, Controller } from "react-hook-form";
 import { useEffect, useState } from "react";
-import { Input, Checkbox, Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@heroui/react";
-import { Editor } from "primereact/editor";
-
-import "primereact/resources/themes/lara-light-blue/theme.css";
-import "primereact/resources/primereact.min.css";
-import "primeicons/primeicons.css";
+import PreviewModal from "./PreviewModal";
 import CoverUpload from "./cover-upload";
+import { Editor } from "primereact/editor";
 import { useSearchParams } from "next/navigation";
-
-export const metadata = {
-  title: "Create Article - Linkcon News",
-  description: "Publish a new story on Linkcon News",
-};
+import {
+  Input as HeroInput,
+  Checkbox,
+  Button,
+  Select,
+  SelectItem,
+} from "@heroui/react";
+import { siteConfig } from "@/config/site";
 
 export default function DashboardCreate() {
-  const [content, setContent] = useState("");
-  const [title, setTitle] = useState("");
-  const [summary, setSummary] = useState("");
-  const [category, setCategory] = useState("");
-  const [tags, setTags] = useState("");
-  const [cover, setCover] = useState(null);
-  const [isFeatured, setIsFeatured] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
-  const [errors, setErrors] = useState({});
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    reset,
+    watch,
+  } = useForm({
+    defaultValues: {
+      title: "",
+      summary: "",
+      category: "",
+      tags: "",
+      content: "",
+      cover: null,
+      isFeatured: false,
+    },
+  });
 
+  const [showPreview, setShowPreview] = useState(false);
   const searchParams = useSearchParams();
-    const articleId = searchParams.get("aid");
-  // Fetch article data if `articleId` is present
+  const articleId = searchParams.get("aid");
+
+  const cover = watch("cover");
+  const content = watch("content");
+  const title = watch("title");
+  const summary = watch("summary");
+
   useEffect(() => {
     if (articleId) {
-      // fetch logic here to load article details for editing
+      // Load existing article logic
     }
   }, [articleId]);
-  
-  const validateForm = () => {
-    const newErrors = {};
-    if (!title || title.trim().length < 5)
-      newErrors.title = "Title must be at least 5 characters.";
-    if (!summary || summary.trim().length < 10)
-      newErrors.summary = "Summary must be at least 10 characters.";
-    if (!category || category.trim().length < 3)
-      newErrors.category = "Category must be at least 3 characters.";
-    if (!content || content.trim().length < 20)
-      newErrors.content = "Content must be at least 20 characters long.";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
 
-  const handlePublish = () => {
-    if (validateForm()) {
-      // Proceed with API submission
-      console.log({
-        title,
-        summary,
-        category,
-        tags,
-        content,
-        isFeatured,
-        status: "published",
-      });
-      alert("Article published successfully!");
-    }
-  };
-  const handleSaveDraft = () => {
-    if (validateForm()) {
-    // Example logic: Save draft without full validation
-      console.log({
-        title,
-        summary,
-        category,
-        tags,
-        content,
-        isFeatured,
-        status: "Draft",
-      });
-      alert("Draft saved successfully!");
-    }
+  const onSubmit = (data, status = "Draft") => {
+    const articleData = {
+      ...data,
+      tags: data.tags
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter(Boolean),
+      status,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      author: {
+        id: "user_1234",
+        name: "Celebration Ojingulu",
+        role: "admin",
+      },
+      clicks: 0,
+      likes: 0,
+      dislikes: 0,
+      comments: [],
+      slug: data.title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, ""),
+    };
+
+    console.log("✅ Submitting Article:", articleData);
+    // Here you would typically send the articleData to your backend API
+    // For demonstration, we'll just log it and reset the form
+    reset();
+    alert(
+      `Article ${status === "published" ? "published" : "saved as draft"} successfully!`
+    );
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-8 py-6">
+    <form
+      onSubmit={handleSubmit((data) => onSubmit(data, "published"))}
+      className="w-full max-w-5xl mx-auto space-y-8 py-6"
+    >
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
           {articleId ? "Edit Article" : "Create New Article"}
         </h1>
         <button
+          type="button"
           onClick={() => setShowPreview(!showPreview)}
           className="text-sm text-blue-600 hover:underline"
         >
@@ -95,62 +106,79 @@ export default function DashboardCreate() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Inputs Section */}
         <div className="space-y-10">
-          <Input
-            isRequired
+          <HeroInput
             label="Title"
-            name="title"
             labelPlacement="outside"
-            value={title}
             placeholder="Headline of your news..."
-            onChange={(e) => setTitle(e.target.value)}
-            validate={() => errors.title || null}
+            {...register("title", {
+              required: "Title is required",
+              minLength: {
+                value: 5,
+                message: "Title must be at least 5 characters",
+              },
+            })}
+            errorMessage={errors.title?.message}
             isInvalid={!!errors.title}
-            errorMessage={errors.title}
           />
 
-          <Input
-            isRequired
+          <HeroInput
             label="Summary"
-            name="summary"
             labelPlacement="outside"
-            value={summary}
             placeholder="Brief summary for preview"
-            onChange={(e) => setSummary(e.target.value)}
-            validate={() => errors.summary || null}
+            {...register("summary", {
+              required: "Summary is required",
+              minLength: {
+                value: 10,
+                message: "Summary must be at least 10 characters",
+              },
+            })}
+            errorMessage={errors.summary?.message}
             isInvalid={!!errors.summary}
-            errorMessage={errors.summary}
           />
 
-          <Input
-            isRequired
-            label="Category"
+          <Controller
             name="category"
-            labelPlacement="outside"
-            value={category}
-            placeholder="e.g. Politics, Health"
-            onChange={(e) => setCategory(e.target.value)}
-            validate={() => errors.category || null}
-            isInvalid={!!errors.category}
-            errorMessage={errors.category}
+            control={control}
+            rules={{ required: "Please select a category." }}
+            render={({ field }) => (
+              <Select
+                label="Category"
+                labelPlacement="outside"
+                placeholder="Select a category"
+                selectedKeys={field.value ? [field.value] : []}
+                onSelectionChange={(keys) => {
+                  const selected = Array.from(keys)[0];
+                  field.onChange(selected);
+                }}
+                isInvalid={!!errors.category}
+                errorMessage={errors.category?.message}
+              >
+                {siteConfig.categories.map((cat) => (
+                  <SelectItem key={cat.key}>{cat.label}</SelectItem>
+                ))}
+              </Select>
+            )}
           />
 
-          <Input
+          <HeroInput
             label="Tags"
-            name="tags"
             labelPlacement="outside"
-            value={tags}
             placeholder="Comma-separated tags"
-            onChange={(e) => setTags(e.target.value)}
+            {...register("tags")}
           />
 
-          {/* Cover Upload (can integrate component later) */}
-          <div>
+          <div className="space-y-2">
             <label className="block text-sm font-semibold mb-1 text-gray-700 dark:text-gray-300">
               Cover Image
             </label>
-            <CoverUpload onImageUpload={setCover} />
+            <CoverUpload
+              value={watch("cover")}
+              onImageUpload={(url) =>
+                setValue("cover", url, { shouldValidate: true })
+              }
+            />
+
             {cover && (
               <img
                 src={cover}
@@ -158,96 +186,79 @@ export default function DashboardCreate() {
                 className="mt-3 w-full h-48 object-cover rounded-md"
               />
             )}
+            {errors.cover && (
+              <p className="text-sm text-red-500 mt-2">
+                {errors.cover.message}
+              </p>
+            )}
           </div>
 
-          <Checkbox
-            isSelected={isFeatured}
-            onValueChange={setIsFeatured}
-            className="text-gray-700 dark:text-gray-300"
-          >
-            Mark as Featured
-          </Checkbox>
+          <Controller
+            name="isFeatured"
+            control={control}
+            render={({ field }) => (
+              <Checkbox
+                isSelected={field.value}
+                onValueChange={field.onChange}
+                className="text-gray-700 dark:text-gray-300"
+              >
+                Mark as Featured
+              </Checkbox>
+            )}
+          />
         </div>
 
-        {/* Right side: Editor */}
         <div className="space-y-2">
           <label className="block text-sm font-semibold mb-1 text-gray-700 dark:text-gray-300">
             Article Content
           </label>
-          <Editor
-            value={content}
-            onTextChange={(e) => setContent(e.htmlValue)}
-            style={{ height: "350px" }}
-            className={`rounded-md ${
-              errors.content ? "border border-red-500" : ""
-            }`}
+          <Controller
+            name="content"
+            control={control}
+            rules={{
+              required: "Content is required",
+              minLength: {
+                value: 20,
+                message: "Content must be at least 20 characters long",
+              },
+            }}
+            render={({ field }) => (
+              <Editor
+                value={field.value}
+                onTextChange={(e) => field.onChange(e.htmlValue)}
+                style={{ height: "350px" }}
+                className={`rounded-md ${errors.content ? "border border-red-500" : ""}`}
+              />
+            )}
           />
           {errors.content && (
-            <p className="text-sm text-red-500 mt-1">{errors.content}</p>
+            <p className="text-sm text-red-500 mt-1">
+              {errors.content.message}
+            </p>
           )}
         </div>
       </div>
 
       <div className="flex justify-end gap-4">
         <Button
-          onPress={handleSaveDraft}
-          className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-md text-sm font-medium"
+          type="button"
+          onPress={handleSubmit((data) => onSubmit(data, "Draft"))}
         >
           Save as Draft
         </Button>
-
-        <Button
-          onPress={handlePublish}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md text-sm font-medium"
-        >
+        <Button color="primary" type="submit">
           Publish Article
         </Button>
       </div>
 
-      {/* Preview */}
-      <Modal
-        isOpen={showPreview}
+      <PreviewModal
+        open={showPreview}
         onClose={() => setShowPreview(false)}
-        placement="center"
-        size="sm"
-        scrollBehavior="inside"
-        hideCloseButton
-        backdrop="blur"
-      >
-        <ModalContent>
-          <div className="w-[375px] h-[667px] bg-white dark:bg-gray-900 rounded-xl border border-gray-300 dark:border-gray-700 shadow-xl overflow-y-scroll scrollbar-hide">
-            <ModalHeader className="text-center text-lg font-semibold border-b border-gray-200 dark:border-gray-700">
-              📱 Article Preview
-            </ModalHeader>
-            <ModalBody className="overflow-y-auto p-4">
-              <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
-                {title}
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">{summary}</p>
-              {cover && (
-                <img
-                  src={cover}
-                  alt="Preview Cover"
-                  className="w-full h-48 object-cover rounded-md mb-4"
-                />
-              )}
-              <div
-                className="prose dark:prose-invert max-w-none text-sm"
-                dangerouslySetInnerHTML={{ __html: content }}
-              />
-            </ModalBody>
-            <ModalFooter className="flex justify-center">
-              <Button
-                variant="flat"
-                onPress={() => setShowPreview(false)}
-                className="text-blue-600 hover:underline"
-              >
-                Close Preview
-              </Button>
-            </ModalFooter>
-          </div>
-        </ModalContent>
-      </Modal>
-    </div>
+        title={title}
+        summary={summary}
+        cover={cover}
+        content={content}
+      />
+    </form>
   );
 }

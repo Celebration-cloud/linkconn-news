@@ -2,7 +2,7 @@
 
 import { Spinner } from "@heroui/spinner";
 
-export default LoadingScreen = () => {
+const LoadingScreen = () => {
   return (
     <div suppressHydrationWarning className="flex justify-center h-screen">
       <div className="flex-1 flex flex-col items-center justify-center space-y-4">
@@ -18,3 +18,5 @@ export default LoadingScreen = () => {
     </div>
   );
 };
+
+export default LoadingScreen;

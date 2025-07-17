@@ -9,7 +9,7 @@ import { Tooltip } from "primereact/tooltip";
 import { Tag } from "primereact/tag";
 import Image from "next/image";
 
-export default function CoverUpload({ onImageUpload }) {
+export default function CoverUpload({ onImageUpload, value }) {
   const toast = useRef(null);
   const [totalSize, setTotalSize] = useState(0);
   const fileUploadRef = useRef(null);
@@ -90,7 +90,7 @@ export default function CoverUpload({ onImageUpload }) {
           <Image
             alt={file.name}
             role="presentation"
-            src={file.objectURL}
+            src={value || file.objectURL}
             width={100}
             height={100}
             className="rounded shadow"

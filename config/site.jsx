@@ -3,6 +3,12 @@ export const siteConfig = {
   description:
     "Linkcon News delivers trusted, fast, and insightful coverage across Nigeria and the world.",
   logo: "/favicon.ico",
+  categories: [
+    { key: "politics", label: "Politics" },
+    { key: "health", label: "Health" },
+    { key: "sports", label: "Sports" },
+    { key: "tech", label: "Technology" },
+  ],
   navItems: [
     {
       label: "Headlines",
@@ -46,31 +52,31 @@ export const siteConfig = {
     },
   ],
   dashboardSideBar: [
-      {
-        label: "Dashboard",
-        icon: "pi pi-chart-bar",
-        path: "/admin/dashboard",
-      },
-      {
-        label: "Create",
-        icon: "pi pi-pencil",
-        path: "/admin/publish",
-      },
-      {
-        label: "Content Library",
-        icon: "pi pi-book",
-        path: "/admin/content-library",
-      },
-      {
-        separator: true,
-      },
-      {
-        label: "Visit Site",
-        icon: "pi pi-home",
-        path: "/",
-        external: true,
-      },
-    ],
+    {
+      label: "Dashboard",
+      icon: "pi pi-chart-bar",
+      path: "/admin/dashboard",
+    },
+    {
+      label: "Create",
+      icon: "pi pi-pencil",
+      path: "/admin/publish",
+    },
+    {
+      label: "Content Library",
+      icon: "pi pi-book",
+      path: "/admin/content-library",
+    },
+    {
+      separator: true,
+    },
+    {
+      label: "Visit Site",
+      icon: "pi pi-home",
+      path: "/",
+      external: true,
+    },
+  ],
   navMenuItems: [
     {
       label: "Dashboard",

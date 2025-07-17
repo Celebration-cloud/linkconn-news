@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Dropdown } from "primereact/dropdown";
@@ -10,30 +11,29 @@ import { Button } from "@heroui/button";
 import { SearchIcon } from "../icons";
 import { Input } from "@heroui/input";
 import { Kbd } from "@heroui/kbd";
-import { useRouter } from "next/navigation"; // for client-side navigation
 
 const articles = [
   {
     id: 1,
-    thumbnail: "/path/to/thumb.jpg",
+    thumbnail: "/police.jpg",
     title: "Gas Explosion Destroys Acres of Makeshift Structures in Lekki",
     status: "Published",
     date: "02/12/2024 1:26 PM",
-    impressions: 55,
-    clicks: 0,
-    shares: 0,
-    comments: 0,
-  },
-  {
-    id: 2,
-    thumbnail: "/path/to/thumb.jpg",
-    title: "Another Incident at Lagos Market",
-    status: "Drafts",
-    date: "03/01/2024 10:00 AM",
     impressions: 150,
     clicks: 4,
     shares: 2,
     comments: 5,
+  },
+  {
+    id: 2,
+    thumbnail: "/police.jpg",
+    title: "Another Incident at Lagos Market",
+    status: "Drafts",
+    date: "03/01/2024 10:00 AM",
+    impressions: 0,
+    clicks: 0,
+    shares: 0,
+    comments: 0,
   },
 ];
 
@@ -113,7 +113,17 @@ export function ArticleTable() {
     />
   );
 
-  // ✅ Show Edit button for Drafts and Share icon always
+  const commentsBodyTemplate = (rowData) => (
+    <button
+      onClick={() =>
+        router.push(`/admin/content-library/comments?aid=${rowData.id}`)
+      }
+      className="text-blue-600 hover:underline font-medium"
+    >
+      {rowData.comments}
+    </button>
+  );
+
   const iconBody = (rowData) => (
     <div className="flex items-center justify-center gap-2">
       <Button
@@ -167,18 +177,36 @@ export function ArticleTable() {
       field: "impressions",
       header: "Impressions",
       sortable: true,
+      body: (rowData) =>
+        rowData.status === "Drafts" ? "-" : rowData.impressions,
     },
     {
       field: "clicks",
       header: "Clicks",
+      body: (rowData) => (rowData.status === "Drafts" ? "-" : rowData.clicks),
     },
     {
       field: "shares",
       header: "Shares",
+      body: (rowData) => (rowData.status === "Drafts" ? "-" : rowData.shares),
     },
     {
       field: "comments",
       header: "Comments",
+      body: (rowData) =>
+        rowData.status === "Drafts" ? (
+          "-"
+        ) : (
+          <button
+            onClick={() =>
+              router.push(`/admin/content-library/comments?aid=${rowData.id}`)
+            }
+            className="text-blue-600 hover:underline font-medium"
+          >
+            {rowData.comments}
+          </button>
+        ),
+      style: { minWidth: "8rem" },
     },
   ];
 

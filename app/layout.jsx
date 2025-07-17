@@ -48,6 +48,7 @@ export default function RootLayout({ children }) {
       </Head>
 
       <body
+        suppressHydrationWarning
         className={clsx(
           "min-h-screen text-foreground bg-background font-sans antialiased",
           fontSans.variable

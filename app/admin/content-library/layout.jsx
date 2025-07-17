@@ -11,9 +11,7 @@ export default function Layout({ children }) {
   return (
     <main className="min-h-screen px-4 py-8">
       <section className="mx-auto max-w-5xl p-6 bg-gray-100 dark:bg-gray-900 rounded-lg shadow-md">
-        <ArticleTabsLayout>
-          <Suspense fallback={<SpinnerLoading />}>{children}</Suspense>
-        </ArticleTabsLayout>
+        {children}
       </section>
     </main>
   );
