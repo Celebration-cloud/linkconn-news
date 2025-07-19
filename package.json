@@ -9,6 +9,7 @@
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx -c .eslintrc.json --fix"
   },
   "dependencies": {
+    "@clerk/nextjs": "^6.25.4",
     "@heroui/button": "2.2.22",
     "@heroui/code": "2.2.16",
     "@heroui/input": "2.4.22",
@@ -24,6 +25,7 @@
     "@heroui/theme": "2.4.17",
     "@react-aria/ssr": "3.9.9",
     "@react-aria/visually-hidden": "3.8.24",
+    "appwrite": "^18.1.1",
     "clsx": "2.1.1",
     "framer-motion": "11.13.1",
     "intl-messageformat": "10.7.16",
