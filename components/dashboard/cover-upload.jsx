@@ -8,26 +8,36 @@ import { Button } from "primereact/button";
 import { Tooltip } from "primereact/tooltip";
 import { Tag } from "primereact/tag";
 import Image from "next/image";
+import { deleteCoverFromAppwrite, uploadCoverToAppwrite } from "@/lib/uploadToAppwrite";
 
 export default function CoverUpload({ onImageUpload, value }) {
   const toast = useRef(null);
   const [totalSize, setTotalSize] = useState(0);
   const fileUploadRef = useRef(null);
+console.log('value:', value)
+const onTemplateSelect = async (e) => {
+  const file = e.files[0];
 
-  const onTemplateSelect = (e) => {
-    let _totalSize = totalSize;
-    let files = e.files;
-
-    Object.keys(files).forEach((key) => {
-      _totalSize += files[key].size || 0;
+  try {
+    const result = await uploadCoverToAppwrite(file);
+    console.log("🎯 Upload result:", result); // Should contain fileId + url
+    onImageUpload(result.url); // Will be undefined if upload failed
+  } catch (err) {
+    console.error("Upload failed:", err.message);
+    toast.current?.show({
+      severity: "error",
+      summary: "Upload failed",
+      detail: err.message,
     });
+  }
 
-    setTotalSize(_totalSize);
-    const file = e.files[0];
-    if (file && file.objectURL) {
-      onImageUpload(file.objectURL);
-    }
-  };
+  // update totalSize UI
+  let _totalSize = totalSize;
+  Object.keys(e.files).forEach((key) => {
+    _totalSize += e.files[key].size || 0;
+  });
+  setTotalSize(_totalSize);
+};
 
   const onTemplateUpload = (e) => {
     let _totalSize = 0;
@@ -43,11 +53,29 @@ export default function CoverUpload({ onImageUpload, value }) {
     });
   };
 
-  const onTemplateRemove = (file, callback) => {
-    setTotalSize(totalSize - file.size);
-    callback();
+const onTemplateRemove = async (file, callback) => {
+  setTotalSize(totalSize - file.size);
+  callback();
+
+  try {
+    if (value && value.includes("https")) {
+      await deleteCoverFromAppwrite(value);
+    }
     onImageUpload(null);
-  };
+    toast.current?.show({
+      severity: "success",
+      summary: "Deleted",
+      detail: "Cover image deleted successfully.",
+    });
+  } catch (err) {
+    console.error("❌ Delete error:", err.message);
+    toast.current?.show({
+      severity: "error",
+      summary: "Delete failed",
+      detail: err.message,
+    });
+  }
+};
 
   const onTemplateClear = () => {
     setTotalSize(0);
@@ -87,14 +115,19 @@ export default function CoverUpload({ onImageUpload, value }) {
     return (
       <div className="flex items-center flex-wrap bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 p-3 rounded-md w-full">
         <div className="flex items-center" style={{ width: "40%" }}>
-          <Image
-            alt={file.name}
-            role="presentation"
-            src={value || file.objectURL}
-            width={100}
-            height={100}
-            className="rounded shadow"
-          />
+          {value ? (
+            <Image
+              alt={file.name}
+              src={value}
+              width={100}
+              unoptimized={true}
+              height={100}
+              className="rounded shadow object-cover"
+            />
+          ) : (
+            <div className="w-[100px] h-[100px] bg-gray-300 rounded" />
+          )}
+
           <span className="flex flex-col text-left ml-3">
             <span className="font-medium">{file.name}</span>
             <small className="text-gray-500 dark:text-gray-400">

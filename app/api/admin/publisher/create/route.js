@@ -1,5 +1,5 @@
 import { databases, ID } from "@/lib/appwrite";
-import { Query } from "appwrite";
+import { Permission, Query, Role } from "appwrite";
 import { getAuth } from "@clerk/nextjs/server";
 
 export async function POST(req) {
@@ -14,9 +14,10 @@ export async function POST(req) {
     }
 
     // Check if publisher already exists
+    const collectionId = "687a7fc200174c8e82a6"; // <-- Replace with your actual collection ID if different
     const existing = await databases.listDocuments(
       process.env.NEXT_PUBLIC_APPWRITE_ADMIN_DB_ID,
-      "687a7fc200174c8e82a6",
+      collectionId,
       [Query.equal("userId", userId)]
     );
 
@@ -26,10 +27,11 @@ export async function POST(req) {
       // If exists, return the existing publisher
       publisherDoc = existing.documents[0];
     } else {
-      // If not, create a new publisher
+      // If not, create a new publisher with permissions
+
       publisherDoc = await databases.createDocument(
         process.env.NEXT_PUBLIC_APPWRITE_ADMIN_DB_ID,
-        "687a7fc200174c8e82a6",
+        collectionId,
         ID.unique(),
         {
           userId,
@@ -37,7 +39,7 @@ export async function POST(req) {
           liked: 0,
           followers: 0,
           following: 0,
-        }
+        },
       );
     }
 

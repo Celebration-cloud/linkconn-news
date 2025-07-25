@@ -1,7 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { deleteArticleThunk } from "@/store/articleSlice";
 import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Dropdown } from "primereact/dropdown";
@@ -11,47 +14,38 @@ import { Button } from "@heroui/button";
 import { SearchIcon } from "../icons";
 import { Input } from "@heroui/input";
 import { Kbd } from "@heroui/kbd";
+import { updatePublisherThunk } from "@/store/publisherSlice";
+import { Tooltip } from "@heroui/react";
+import { deleteCoverFromAppwrite } from "@/lib/uploadToAppwrite";
+import PreviewModal from "./PreviewModal";
 
-const articles = [
-  {
-    id: 1,
-    thumbnail: "/police.jpg",
-    title: "Gas Explosion Destroys Acres of Makeshift Structures in Lekki",
-    status: "Published",
-    date: "02/12/2024 1:26 PM",
-    impressions: 150,
-    clicks: 4,
-    shares: 2,
-    comments: 5,
-  },
-  {
-    id: 2,
-    thumbnail: "/police.jpg",
-    title: "Another Incident at Lagos Market",
-    status: "Drafts",
-    date: "03/01/2024 10:00 AM",
-    impressions: 0,
-    clicks: 0,
-    shares: 0,
-    comments: 0,
-  },
-];
-
-const statusOptions = ["Published", "Drafts"];
+const statusOptions = ["published", "draft"]; // lowercase to match DB
 const statusSeverityMap = {
-  Published: "success",
-  Drafts: "warning",
-  Rejected: "danger",
-  Pending: "secondary",
+  published: "success",
+  draft: "warning",
+  rejected: "danger",
+  pending: "secondary",
 };
 
 export function ArticleTable() {
-  const [filters, setFilters] = useState({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    status: { value: null, matchMode: FilterMatchMode.EQUALS },
-  });
+  const {
+    articles: articlesdb,
+    loading,
+    error,
+  } = useSelector((state) => state.article);
+  const publisher = useSelector((state) => state.publisher.data);
+  const [showPreview, setShowPreview] = useState(false);
+  const [selectedArticle, setSelectedArticle] = useState(null);
+
+
+ const [filters, setFilters] = useState({
+   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+   title: { value: null, matchMode: FilterMatchMode.CONTAINS },
+   status: { value: null, matchMode: FilterMatchMode.EQUALS },
+ });
 
   const [globalFilterValue, setGlobalFilterValue] = useState("");
+  const dispatch = useDispatch();
   const router = useRouter();
 
   const onGlobalFilterChange = (e) => {
@@ -91,14 +85,18 @@ export function ArticleTable() {
 
   const thumbnailBody = (row) => (
     <img
-      src={row.thumbnail}
+      src={row.cover || "/default-thumb.jpg"}
       alt={row.title}
       className="w-12 h-8 object-cover rounded"
     />
   );
 
   const statusBodyTemplate = (rowData) => (
-    <Tag value={rowData.status} severity={getSeverity(rowData.status)} />
+    <Tag
+      value={rowData.status}
+      severity={getSeverity(rowData.status)}
+      className="capitalize"
+    />
   );
 
   const statusFilterTemplate = (options) => (
@@ -116,16 +114,18 @@ export function ArticleTable() {
   const commentsBodyTemplate = (rowData) => (
     <button
       onClick={() =>
-        router.push(`/admin/content-library/comments?aid=${rowData.id}`)
+        router.push(`/admin/content-library/comments?aid=${rowData.$id}`)
       }
       className="text-blue-600 hover:underline font-medium"
     >
-      {rowData.comments}
+      {rowData.comments ?? 0}
     </button>
   );
 
-  const iconBody = (rowData) => (
-    <div className="flex items-center justify-center gap-2">
+
+const iconBody = (rowData) => (
+  <div className="flex items-center justify-center gap-2">
+    <Tooltip content="Share">
       <Button
         isIconOnly
         className="p-button-rounded p-button-text"
@@ -133,113 +133,162 @@ export function ArticleTable() {
       >
         <i className="pi pi-share-alt text-blue-500 text-lg cursor-pointer" />
       </Button>
-      {rowData.status === "Drafts" && (
+    </Tooltip>
+
+    <Tooltip content="Edit">
+      {rowData.status === "Draft" && (
         <Button
-          size="sm"
-          variant="flat"
+          isIconOnly
           color="primary"
-          onPress={() => router.push(`/admin/publish?aid=${rowData.id}`)}
+          onPress={() => router.push(`/admin/publish?aid=${rowData.$id}`)}
         >
-          Edit
+          <i className="pi pi-pen-to-square  text-lg cursor-pointer" />
         </Button>
       )}
-    </div>
-  );
+    </Tooltip>
 
-  const dataTableContent = [
-    {
-      header: "Thumb",
-      body: thumbnailBody,
-      style: { minWidth: "8rem" },
-    },
-    {
-      field: "title",
-      header: "Title",
-      filter: true,
-      filterPlaceholder: "Search by title",
-      style: { minWidth: "16rem" },
-    },
-    {
-      field: "status",
-      header: "Status",
-      body: statusBodyTemplate,
-      filter: true,
-      filterElement: statusFilterTemplate,
-      showFilterMenu: false,
-      style: { minWidth: "12rem" },
-    },
-    {
-      field: "date",
-      header: "Date",
-      style: { minWidth: "14rem" },
-    },
-    {
-      field: "impressions",
-      header: "Impressions",
-      sortable: true,
-      body: (rowData) =>
-        rowData.status === "Drafts" ? "-" : rowData.impressions,
-    },
-    {
-      field: "clicks",
-      header: "Clicks",
-      body: (rowData) => (rowData.status === "Drafts" ? "-" : rowData.clicks),
-    },
-    {
-      field: "shares",
-      header: "Shares",
-      body: (rowData) => (rowData.status === "Drafts" ? "-" : rowData.shares),
-    },
-    {
-      field: "comments",
-      header: "Comments",
-      body: (rowData) =>
-        rowData.status === "Drafts" ? (
-          "-"
-        ) : (
-          <button
-            onClick={() =>
-              router.push(`/admin/content-library/comments?aid=${rowData.id}`)
-            }
-            className="text-blue-600 hover:underline font-medium"
-          >
-            {rowData.comments}
-          </button>
-        ),
-      style: { minWidth: "8rem" },
-    },
-  ];
+    <Tooltip content="Delete">
+      <Button
+        isIconOnly
+        className="p-button-rounded p-button-text"
+        color="danger"
+        onPress={async () => {
+          dispatch(deleteArticleThunk(rowData.$id));
+          if (rowData.cover && rowData.cover.includes("https")) {
+            await deleteCoverFromAppwrite(rowData.cover);
+          }
+          dispatch(
+            updatePublisherThunk({
+              published: publisher?.published - 1,
+              liked: publisher?.liked,
+              followers: publisher?.followers,
+              following: publisher?.following,
+            })
+          );
+        }}
+      >
+        <i className="pi pi-trash text-lg cursor-pointer" />
+      </Button>
+    </Tooltip>
+  </div>
+);
+
+
+  const formatDate = (isoDate) => {
+    const d = new Date(isoDate);
+    return d.toLocaleString("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
   return (
     <div className="overflow-auto rounded-md border border-gray-200 dark:border-gray-700">
       <DataTable
-        value={articles}
+        value={articlesdb}
         paginator
         rows={10}
-        dataKey="id"
+        dataKey="$id"
         responsiveLayout="scroll"
         showGridlines
         stripedRows
         filters={filters}
         filterDisplay="row"
-        globalFilterFields={["title", "status"]}
+        globalFilterFields={["title", "status", "summary"]}
         header={renderHeader()}
         className="min-w-full text-gray-900 dark:text-gray-100 dark:bg-gray-900"
       >
-        {dataTableContent.map((col, idx) => (
-          <Column
-            key={col.field || col.header || idx}
-            {...col}
-            className="bg-white dark:bg-gray-900 dark:text-white"
-          />
-        ))}
+        <Column
+          header="Thumb"
+          body={thumbnailBody}
+          style={{ minWidth: "8rem" }}
+          className="bg-white dark:bg-gray-900 dark:text-white"
+        />
+        <Column
+          field="title"
+          header="Title"
+          filter
+          // filterPlaceholder="Search by title"
+          style={{ minWidth: "16rem" }}
+          className="bg-white dark:bg-gray-900 dark:text-white"
+          body={(rowData) => (
+            <button
+              onClick={() => {
+                setSelectedArticle(rowData);
+                setShowPreview(true);
+              }}
+              className="hover:text-blue-600 text-left"
+            >
+              {rowData.title}
+            </button>
+          )}
+        />
 
         <Column
+          field="status"
+          header="Status"
+          body={statusBodyTemplate}
+          filter
+          filterElement={statusFilterTemplate}
+          showFilterMenu={false}
+          style={{ minWidth: "12rem" }}
+          className="bg-white dark:bg-gray-900 dark:text-white"
+        />
+        <Column
+          field="$createdAt"
+          header="Date"
+          body={(rowData) => formatDate(rowData.$createdAt)}
+          style={{ minWidth: "14rem" }}
+          className="bg-white dark:bg-gray-900 dark:text-white"
+        />
+        <Column
+          field="impressions"
+          header="Impressions"
+          sortable
+          body={(rowData) =>
+            rowData.status === "draft" ? "-" : (rowData.impressions ?? 0)
+          }
+          className="bg-white dark:bg-gray-900 dark:text-white"
+        />
+        <Column
+          field="clicks"
+          header="Clicks"
+          body={(rowData) =>
+            rowData.status === "draft" ? "-" : (rowData.clicks ?? 0)
+          }
+          className="bg-white dark:bg-gray-900 dark:text-white"
+        />
+        <Column
+          field="shares"
+          header="Shares"
+          body={(rowData) =>
+            rowData.status === "draft" ? "-" : (rowData.shares ?? 0)
+          }
+          className="bg-white dark:bg-gray-900 dark:text-white"
+        />
+        <Column
+          header="Comments"
+          body={commentsBodyTemplate}
+          style={{ minWidth: "8rem" }}
+          className="bg-white dark:bg-gray-900 dark:text-white"
+        />
+        <Column
           body={iconBody}
-          className="bg-white dark:bg-gray-900 dark:text-white text-center"
           style={{ width: "8rem" }}
+          className="bg-white dark:bg-gray-900 dark:text-white text-center"
         />
       </DataTable>
+      <PreviewModal
+        open={showPreview}
+        onClose={() => setShowPreview(false)}
+        title={selectedArticle?.title || ""}
+        summary={selectedArticle?.summary || ""}
+        cover={selectedArticle?.cover || ""}
+        content={selectedArticle?.content || ""}
+      />
     </div>
   );
 }

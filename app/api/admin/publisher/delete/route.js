@@ -1,4 +1,5 @@
 import { databases } from "@/lib/appwrite";
+import { Permission, Query, Role } from "appwrite";
 import { getAuth } from "@clerk/nextjs/server";
 
 export async function DELETE(req) {
@@ -12,12 +13,12 @@ export async function DELETE(req) {
       );
     }
 
-    // Check if publisher exists for this user
-    const existing = await databases.listDocuments(
-      process.env.NEXT_PUBLIC_APPWRITE_ADMIN_DB_ID,
-      "Publisher",
-      [{ key: "userId", value: userId, operator: "equal" }]
-    );
+    const dbId = process.env.NEXT_PUBLIC_APPWRITE_ADMIN_DB_ID;
+    const collectionId = "687a7fc200174c8e82a6"; // <-- Replace with your actual collection ID if different
+
+    const existing = await databases.listDocuments(dbId, collectionId, [
+      Query.equal("userId", userId),
+    ]);
 
     if (existing.total === 0) {
       return Response.json(
@@ -26,10 +27,9 @@ export async function DELETE(req) {
       );
     }
 
-    // Delete the publisher document
     await databases.deleteDocument(
-      process.env.NEXT_PUBLIC_APPWRITE_DB_ID,
-      "publisher",
+      dbId,
+      collectionId,
       existing.documents[0].$id
     );
 

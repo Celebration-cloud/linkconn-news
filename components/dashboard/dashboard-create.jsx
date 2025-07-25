@@ -2,12 +2,13 @@
 
 "use client";
 
+
 import { useForm, Controller } from "react-hook-form";
-import { useEffect, useState } from "react";
+import React,{ useEffect, useState } from "react";
 import PreviewModal from "./PreviewModal";
 import CoverUpload from "./cover-upload";
 import { Editor } from "primereact/editor";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Input as HeroInput,
   Checkbox,
@@ -15,11 +16,48 @@ import {
   Select,
   SelectItem,
 } from "@heroui/react";
+import { addToast } from "@heroui/react";
 import { siteConfig } from "@/config/site";
+import { useDispatch, useSelector } from "react-redux";
+import { useUser } from "@clerk/nextjs";
+import Image from "next/image";
+import { updatePublisherThunk } from "@/store/publisherSlice";
+import { createArticleThunk, fetchArticleByIdThunk, updateArticleThunk } from "@/store/articleSlice";
+import { SpinnerLoading } from "../spinner-loading";
+
+const MAX_WORDS = 800;
+const MAX_CHARACTERS = 5000;
+
+// Helper functions
+function stripHtml(html) {
+  if (!html) return "";
+  return html
+    .replace(/<[^>]+>/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+function countWords(text) {
+  if (!text) return 0;
+  return text.split(/\s+/).filter(Boolean).length;
+}
+function countChars(text) {
+  if (!text) return 0;
+  return text.length;
+}
 
 export default function DashboardCreate() {
+  const publisher = useSelector((state) => state.publisher.data);
+  const [isLoading, setIsLoading] = useState(false);
+  const [wasPublished, setWasPublished] = useState(false); // 🆕
+  
+
+  const dispatch = useDispatch();
+  const router = useRouter();
+  // const [isLoadingDraft, setIsLoadingDraft] = useState(false);
+  // const [isLoadingPublish, setIsLoadingPublish] = useState(false);
+  console.log(publisher);
+  const { user } = useUser();
   const {
-    register,
     control,
     handleSubmit,
     formState: { errors },
@@ -46,14 +84,43 @@ export default function DashboardCreate() {
   const content = watch("content");
   const title = watch("title");
   const summary = watch("summary");
+  console.log("cover:", cover);
+
+  const plainContent = stripHtml(content);
+  const wordCount = countWords(plainContent);
+  const charCount = countChars(plainContent);
+  const isWordLimitExceeded = wordCount > MAX_WORDS;
+  const isCharLimitExceeded = charCount > MAX_CHARACTERS;
 
   useEffect(() => {
     if (articleId) {
-      // Load existing article logic
+      setIsLoading(true);
+      dispatch(fetchArticleByIdThunk(articleId)).then(({ payload }) => {
+        const article = payload?.data;
+        if (article) {
+          reset({
+            title: article.title,
+            summary: article.summary,
+            category: article.category,
+            tags: article.tags?.join(", "),
+            cover: article.cover || null,
+            isFeatured: article.isFeatured || false,
+            content: "",
+          });
+          if (article.status === "published") {
+            setWasPublished(true); // 🆕
+          }
+          
+          setTimeout(() => {
+            setValue("content", article.content);
+          }, 0);
+        }
+      });
+      setIsLoading(false);
     }
   }, [articleId]);
 
-  const onSubmit = (data, status = "Draft") => {
+  const onSubmit = async (data, status = "Draft") => {
     const articleData = {
       ...data,
       tags: data.tags
@@ -61,31 +128,64 @@ export default function DashboardCreate() {
         .map((tag) => tag.trim())
         .filter(Boolean),
       status,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      author: {
-        id: "user_1234",
-        name: "Celebration Ojingulu",
-        role: "admin",
-      },
+      authorName: user.fullName,
+      authorRole: "admin",
       clicks: 0,
       likes: 0,
       dislikes: 0,
-      comments: [],
+      comments: 0,
+      shares: 0,
+      impressions: 0,
       slug: data.title
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-|-$/g, ""),
     };
 
-    console.log("✅ Submitting Article:", articleData);
-    // Here you would typically send the articleData to your backend API
-    // For demonstration, we'll just log it and reset the form
-    reset();
-    alert(
-      `Article ${status === "published" ? "published" : "saved as draft"} successfully!`
-    );
+    try {
+      setIsLoading(true);
+
+      if (articleId) {
+        dispatch(updateArticleThunk({ id: articleId, data: articleData }));
+      } else {
+        dispatch(createArticleThunk(articleData));
+      }
+      // Only update publisher stats if new article is published
+      if (articleData.status === "published") {
+        dispatch(
+          updatePublisherThunk({
+            published: publisher?.published + 1,
+            liked: publisher?.liked,
+            followers: publisher?.followers,
+            following: publisher?.following,
+          })
+        );
+      }
+
+      reset();
+      router.replace("/admin/content-library");
+    } catch (error) {
+      addToast({
+        title: "Failed to submit article",
+        description: error.message,
+        color: "danger",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  if (wasPublished) {
+    addToast({
+      title: "Already Published",
+      description: "This article has already been published.",
+      type: "info",
+    });
+    router.replace("/admin/content-library");
+    return;
+  }
+
+  if (articleId && isLoading) return (<SpinnerLoading />);
 
   return (
     <form
@@ -107,36 +207,50 @@ export default function DashboardCreate() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-10">
-          <HeroInput
-            label="Title"
-            labelPlacement="outside"
-            placeholder="Headline of your news..."
-            {...register("title", {
+          <Controller
+            name="title"
+            control={control}
+            rules={{
               required: "Title is required",
               minLength: {
                 value: 5,
                 message: "Title must be at least 5 characters",
               },
-            })}
-            errorMessage={errors.title?.message}
-            isInvalid={!!errors.title}
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <HeroInput
+                {...field}
+                label="Title"
+                labelPlacement="outside"
+                className="!opacity-100 !visible !block"
+                placeholder="Headline of your news..."
+                errorMessage={error?.message}
+                isInvalid={!!error}
+              />
+            )}
           />
-
-          <HeroInput
-            label="Summary"
-            labelPlacement="outside"
-            placeholder="Brief summary for preview"
-            {...register("summary", {
+          <Controller
+            name="summary"
+            control={control}
+            rules={{
               required: "Summary is required",
               minLength: {
                 value: 10,
                 message: "Summary must be at least 10 characters",
               },
-            })}
-            errorMessage={errors.summary?.message}
-            isInvalid={!!errors.summary}
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <HeroInput
+                {...field}
+                label="Summary"
+                labelPlacement="outside"
+                className="!opacity-100 !visible !block"
+                placeholder="Brief summary for preview"
+                errorMessage={error?.message}
+                isInvalid={!!error}
+              />
+            )}
           />
-
           <Controller
             name="category"
             control={control}
@@ -160,29 +274,37 @@ export default function DashboardCreate() {
               </Select>
             )}
           />
-
-          <HeroInput
-            label="Tags"
-            labelPlacement="outside"
-            placeholder="Comma-separated tags"
-            {...register("tags")}
+          <Controller
+            name="tags"
+            control={control}
+            render={({ field }) => (
+              <HeroInput
+                {...field}
+                label="Tags"
+                labelPlacement="outside"
+                placeholder="Comma-separated tags"
+              />
+            )}
           />
-
           <div className="space-y-2">
             <label className="block text-sm font-semibold mb-1 text-gray-700 dark:text-gray-300">
               Cover Image
             </label>
             <CoverUpload
               value={watch("cover")}
-              onImageUpload={(url) =>
-                setValue("cover", url, { shouldValidate: true })
-              }
+              onImageUpload={(url) => {
+                console.log("✅ Uploaded cover URL:", url);
+                setValue("cover", url, { shouldValidate: true });
+              }}
             />
 
             {cover && (
-              <img
+              <Image
                 src={cover}
                 alt="Cover preview"
+                unoptimized={true}
+                width={800} // or whatever size fits your design
+                height={192} // for h-48 (48 x 4 = 192px)
                 className="mt-3 w-full h-48 object-cover rounded-md"
               />
             )}
@@ -192,7 +314,6 @@ export default function DashboardCreate() {
               </p>
             )}
           </div>
-
           <Controller
             name="isFeatured"
             control={control}
@@ -221,6 +342,14 @@ export default function DashboardCreate() {
                 value: 20,
                 message: "Content must be at least 20 characters long",
               },
+              validate: {
+                maxWords: (value) =>
+                  countWords(stripHtml(value)) <= MAX_WORDS ||
+                  `Maximum ${MAX_WORDS} words allowed`,
+                maxChars: (value) =>
+                  countChars(stripHtml(value)) <= MAX_CHARACTERS ||
+                  `Maximum ${MAX_CHARACTERS} characters allowed`,
+              },
             }}
             render={({ field }) => (
               <Editor
@@ -231,6 +360,14 @@ export default function DashboardCreate() {
               />
             )}
           />
+          <div className="flex gap-4 text-xs mt-1">
+            <span className={isWordLimitExceeded ? "text-red-500" : ""}>
+              Words: {wordCount}/{MAX_WORDS}
+            </span>
+            <span className={isCharLimitExceeded ? "text-red-500" : ""}>
+              Characters: {charCount}/{MAX_CHARACTERS}
+            </span>
+          </div>
           {errors.content && (
             <p className="text-sm text-red-500 mt-1">
               {errors.content.message}
@@ -238,15 +375,15 @@ export default function DashboardCreate() {
           )}
         </div>
       </div>
-
       <div className="flex justify-end gap-4">
         <Button
           type="button"
+          isLoading={isLoading}
           onPress={handleSubmit((data) => onSubmit(data, "Draft"))}
         >
           Save as Draft
         </Button>
-        <Button color="primary" type="submit">
+        <Button color="primary" isLoading={isLoading} type="submit">
           Publish Article
         </Button>
       </div>

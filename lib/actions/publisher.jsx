@@ -12,7 +12,6 @@ async function fetcher(url, options = {}) {
   return data;
 }
 
-// Create publisher (accepts data object)
 export async function createPublisher() {
   return fetcher("/api/admin/publisher/create", {
     method: "POST",
@@ -42,10 +41,8 @@ export async function updatePublisher(data) {
   });
 }
 
-// Delete publisher (accepts data object, e.g. for custom delete logic)
-export async function deletePublisher(data = {}) {
+export async function deletePublisher() {
   return fetcher("/api/admin/publisher/delete", {
     method: "DELETE",
-    body: Object.keys(data).length ? JSON.stringify(data) : undefined,
   });
 }

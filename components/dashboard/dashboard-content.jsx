@@ -1,12 +1,15 @@
 "use client";
 
-import { createPublisher } from "@/lib/actions/publisher";
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { createPublisherThunk } from "@/store/publisherSlice";
 
 export default function DashboardContent() {
   const { user, isLoaded, isSignedIn } = useUser();
-  const [publisher, setPublisher] = useState(null);
+  const dispatch = useDispatch();
+  const publisher = useSelector((state) => state.publisher.data);
+  const loading = useSelector((state) => state.publisher.loading);
   const [revalidate, setRevalidate] = useState(false);
 
   const dashboard = [
@@ -29,28 +32,12 @@ export default function DashboardContent() {
   ];
 
   useEffect(() => {
-    const fetchPublisher = async () => {
-      try {
-        if (isLoaded && isSignedIn && user?.id) {
-          const response = await createPublisher();
-          console.log(response);
-          const data = response?.data;
-          setPublisher(data);
-        }
-      } catch (error) {
-        if (error.message === "Publisher not found.") {
-          setPublisher(null);
-        } else {
-          console.error("Error fetching publisher:", error);
-        }
-      }
-    };
-
-
-    return () => {
-      fetchPublisher()
-    };
-  }, [isLoaded, isSignedIn, user, revalidate]);
+    if (isLoaded && isSignedIn && user?.id) {
+      dispatch(createPublisherThunk({ userId: user.id }));
+    }
+    // Only run when these change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded, isSignedIn, user?.id, revalidate]);
 
   // Call this function to revalidate (refresh) publisher data
   const handleRevalidate = () => setRevalidate((prev) => !prev);
@@ -73,9 +60,11 @@ export default function DashboardContent() {
           Welcome, {user?.firstName || "Publisher"}!
         </h3>
         <article className="mt-4 text-center text-sm text-gray-500">
-          {publisher
-            ? `You have ${publisher.published} published posts, ${publisher.liked} likes, ${publisher.followers} followers, and you're following ${publisher.following} others.`
-            : "Loading your publisher data..."}
+          {loading
+            ? "Loading your publisher data..."
+            : publisher
+              ? `You have ${publisher.published} published posts, ${publisher.liked} likes, ${publisher.followers} followers, and you're following ${publisher.following} others.`
+              : "No publisher data found."}
         </article>
         <div className="flex justify-center mt-4">
           <button
