@@ -5,6 +5,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { SidebarProvider } from "@/context/sidebar-context";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Suspense } from "react";
+import React from "react"
 
 export default function Layout({ children }) {
   return (

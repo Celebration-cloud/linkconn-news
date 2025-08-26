@@ -1,4 +1,5 @@
 import { SignInButton, SignUpButton } from "@clerk/nextjs";
+import React from "react"
 import { Button } from "@heroui/button";
 import Image from "next/image";
 
@@ -19,10 +20,14 @@ export default function LoginPage() {
 
           <div className="flex gap-4 pt-4">
             <div className="flex gap-4 pt-4">
-              <SignUpButton redirectUrl="/admin/dashboard">
-                <Button color="primary">Sign Up</Button>
-              </SignUpButton>
-              <SignInButton redirectUrl="/admin/dashboard">
+              <SignInButton
+                // appearance={{
+                //   elements: {
+                //     footerAction__signUp: "hidden", // hide the "Sign up" link
+                //   },
+                // }}
+                redirectUrl="/admin/dashboard"
+              >
                 <Button variant="bordered" color="primary">
                   Sign In
                 </Button>

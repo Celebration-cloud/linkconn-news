@@ -1,3 +1,4 @@
+/* eslint-disable react/react-in-jsx-scope */
 "use client";
 
 import {
@@ -37,44 +38,44 @@ const hiddenNavbarRoutes = ["/auth", "/login", "/onboarding", "/admin/login"];
 export default function DashboardNavbar() {
   const { toggleSidebar } = useSidebar();
   const pathname = usePathname();
-  const router = useRouter();
+  // const router = useRouter();
   const { isLoaded, user } = useUser();
-  const { signOut } = useClerk();
+  // const { signOut } = useClerk();
 
   const hideNavbar = hiddenNavbarRoutes.includes(pathname);
   if (!isLoaded) return null;
 
 
-const handleAccountDelete = async () => {
-  const confirmDelete = confirm(
-    "Are you sure you want to permanently delete your account? This action cannot be undone."
-  );
-  if (!confirmDelete) return;
+// const handleAccountDelete = async () => {
+//   const confirmDelete = confirm(
+//     "Are you sure you want to permanently delete your account? This action cannot be undone."
+//   );
+//   if (!confirmDelete) return;
 
-  try {
-    // 1. Delete Appwrite publisher record using action
-    await deletePublisher();
+//   try {
+//     // 1. Delete Clerk user
+//     await user.delete();
 
-    // 2. Delete Clerk user
-    await user.delete();
+//     // 2. Delete Appwrite publisher record using action
+//     await deletePublisher();
 
-    addToast({
-      title: "Your account has been deleted.",
-      description: "Your account has been deleted successfully",
-      color: "success",
-    });
+//     addToast({
+//       title: "Your account has been deleted.",
+//       description: "Your account has been deleted successfully",
+//       color: "success",
+//     });
 
-    router.push("/admin/login");
-  } catch (err) {
-    console.error(err);
-    addToast({
-      title: "Failed to delete account.",
-      description:
-        err.message || "Something went wrong while deleting account.",
-      color: "warning",
-    });
-  }
-};
+//     router.push("/admin/login");
+//   } catch (err) {
+//     console.error(err);
+//     addToast({
+//       title: "Failed to delete account.",
+//       description:
+//         err.message || "Something went wrong while deleting account.",
+//       color: "warning",
+//     });
+//   }
+// };
 
 
   return (
@@ -97,69 +98,27 @@ const handleAccountDelete = async () => {
 
         <NavbarContent as="div" justify="end">
           <div className="flex gap-4 items-center">
-            <NavbarItem>
+            {/* <NavbarItem>
               <Badge color="primary" variant="solid" content="3">
                 <i className="pi pi-comment text-4xl" />
               </Badge>
+            </NavbarItem> */}
+            <NavbarItem>
+              <UserButton
+                afterSignOutUrl="/admin/login"
+                userProfileMode="navigation"
+                appearance={{
+                  elements: {
+                    avatarBox: "ring-2 ring-blue-500", // small customization
+                  },
+                }}
+                userButtonMenuItems={{
+                  account: true, // keep "Manage account"
+                  signOut: true, // keep "Sign out"
+                  // custom option
+                }}
+              />
             </NavbarItem>
-
-            <SignedIn>
-              <Dropdown placement="bottom-end">
-                <DropdownTrigger>
-                  <Avatar
-                    isBordered
-                    as="button"
-                    className="transition-transform"
-                    color="secondary"
-                    name={user?.fullName || "User"}
-                    size="sm"
-                    src={user?.imageUrl || "/default-avatar.png"}
-                  />
-                </DropdownTrigger>
-                <DropdownMenu aria-label="Account options" variant="flat">
-                  <DropdownItem key="profile" className="h-14 gap-2">
-                    <p className="font-semibold">Signed in as</p>
-                    <p className="font-semibold text-sm text-default-500">
-                      {user?.primaryEmailAddress?.emailAddress}
-                    </p>
-                  </DropdownItem>
-
-                  <DropdownItem
-                    key="manage-account"
-                    onClick={() => router.push("/user")}
-                    className="place-items-center space-x-5"
-                  >
-                    <div className="flex items-center gap-3">
-                      <i className="pi pi-cog text-lg" />
-                      <span>Manage Account</span>
-                    </div>
-                  </DropdownItem>
-
-                  <DropdownItem
-                    key="sign-out"
-                    onClick={() => signOut(() => router.replace("/admin/login"))}
-                    className="place-items-center space-x-5"
-                  >
-                    <div className="flex items-center gap-3">
-                      <i className="pi pi-sign-out text-lg" />
-                      <span>Sign Out</span>
-                    </div>
-                  </DropdownItem>
-
-                  <DropdownItem
-                    key="delete"
-                    onClick={handleAccountDelete}
-                    className="text-danger place-items-center space-x-5"
-                  >
-                    <div className="flex items-center gap-3">
-                      <i className="pi pi-trash text-lg" />
-                      <span>Delete Account</span>
-                    </div>
-                  </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-            </SignedIn>
-
             <NavbarItem>
               <ThemeSwitch />
             </NavbarItem>

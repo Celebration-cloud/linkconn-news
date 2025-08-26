@@ -51,6 +51,19 @@ export const siteConfig = {
       href: "/world",
     },
   ],
+  newsSections: [
+    "Headlines",
+    "Politics",
+    "Business",
+    "Technology",
+    "Health",
+    "Sports",
+    "Entertainment",
+    "Education",
+    "Opinion",
+    "World",
+  ],
+
   dashboardSideBar: [
     {
       label: "Dashboard",
@@ -66,6 +79,11 @@ export const siteConfig = {
       label: "Content Library",
       icon: "pi pi-book",
       path: "/admin/content-library",
+    },
+    {
+      label: "Settings",
+      icon: "pi pi-cog",
+      path: "/admin/settings",
     },
     {
       separator: true,

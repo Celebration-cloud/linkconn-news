@@ -27,6 +27,7 @@ import { updatePublisherThunk } from "@/store/publisherSlice";
 import { deleteCoverFromAppwrite } from "@/lib/uploadToAppwrite";
 import PreviewModal from "../PreviewModal";
 import { SearchIcon } from "@/components/icons";
+import Link from "next/link";
 
 const statusOptions = [
   { name: "published", uid: "published" },
@@ -202,12 +203,22 @@ const filteredItems = useMemo(() => {
 
       case "comments":
         return (
-          <button
-            onClick={() => router.push(`/admin/content-library/comments?aid=${item.$id}`)}
-            className="text-blue-600 hover:underline font-medium"
-          >
-            {cellValue ?? 0}
-          </button>
+          <>
+            {item.status === "Draft" ? (
+              <button className="cursor-text">
+                {item.status === "Draft" ? "-" : (cellValue ?? 0)}
+              </button>
+            ) : (
+              <button
+                onClick={() =>
+                  router.push(`/admin/content-library/comments?aid=${item.$id}`)
+                }
+                className="text-blue-600 hover:underline font-medium"
+              >
+                {item.status === "Draft" ? "-" : (cellValue ?? 0)}
+              </button>
+            )}
+          </>
         );
 
       case "actions":
@@ -240,84 +251,88 @@ const filteredItems = useMemo(() => {
     }
   }, [router, publisher]);
 
-  const topContent = useMemo(() => (
-    <div className="flex flex-col gap-4">
-      <div className="flex justify-between gap-3 items-end">
-        <Input
-          isClearable
-          className="w-full sm:max-w-[44%]"
-          placeholder="Search by title..."
-          startContent={<SearchIcon />}
-          value={globalFilterValue}
-          onClear={() => setGlobalFilterValue("")}
-          onValueChange={setGlobalFilterValue}
-        />
-        <div className="flex gap-3">
-          <Dropdown>
-            <DropdownTrigger className="hidden sm:flex">
-              <Button variant="flat">
-                Status
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu
-              disallowEmptySelection
-              closeOnSelect={false}
-              selectedKeys={statusFilter}
-              selectionMode="multiple"
-              onSelectionChange={setStatusFilter}
-            >
-              {statusOptions.map((s) => (
-                <DropdownItem key={s.uid} className="capitalize">
-                  {capitalize(s.name)}
-                </DropdownItem>
-              ))}
-            </DropdownMenu>
-          </Dropdown>
+  const topContent = useMemo(
+    () => (
+      <div className="flex flex-col gap-4">
+        <div className="flex justify-between gap-3 items-end">
+          <Input
+            isClearable
+            className="w-full sm:max-w-[44%]"
+            placeholder="Search by title..."
+            startContent={<SearchIcon />}
+            value={globalFilterValue}
+            onClear={() => setGlobalFilterValue("")}
+            onValueChange={setGlobalFilterValue}
+          />
+          <div className="flex gap-3">
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button variant="flat">Status</Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                closeOnSelect={false}
+                selectedKeys={statusFilter}
+                selectionMode="multiple"
+                onSelectionChange={setStatusFilter}
+              >
+                {statusOptions.map((s) => (
+                  <DropdownItem key={s.uid} className="capitalize">
+                    {capitalize(s.name)}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
 
-          <Dropdown>
-            <DropdownTrigger className="hidden sm:flex">
-              <Button  variant="flat">
-                Columns
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu
-              disallowEmptySelection
-              closeOnSelect={false}
-              selectionMode="multiple"
-              selectedKeys={visibleColumns}
-              onSelectionChange={setVisibleColumns}
-            >
-              {columns.map((col) => (
-                <DropdownItem key={col.uid} className="capitalize">
-                  {capitalize(col.name)}
-                </DropdownItem>
-              ))}
-            </DropdownMenu>
-          </Dropdown>
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button variant="flat">Columns</Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                closeOnSelect={false}
+                selectionMode="multiple"
+                selectedKeys={visibleColumns}
+                onSelectionChange={setVisibleColumns}
+              >
+                {columns.map((col) => (
+                  <DropdownItem key={col.uid} className="capitalize">
+                    {capitalize(col.name)}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
 
-          <Button color="primary" >
-            Add New
-          </Button>
+            <Button
+              color="primary"
+              onPress={() => router.push("/admin/publish")}
+            >
+              Add New
+            </Button>
+          </div>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-default-400 text-small">
+            Total {articlesdb.length} articles
+          </span>
+          <label className="flex items-center text-default-400 text-small gap-2">
+            Rows per page:
+            <select
+              className="bg-transparent outline-none text-default-400 text-small"
+              onChange={(e) => setRowsPerPage(Number(e.target.value))}
+            >
+              {[5, 10, 15].map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
       </div>
-      <div className="flex justify-between items-center">
-        <span className="text-default-400 text-small">Total {articlesdb.length} articles</span>
-        <label className="flex items-center text-default-400 text-small gap-2">
-          Rows per page:
-          <select
-            className="bg-transparent outline-none text-default-400 text-small"
-            onChange={(e) => setRowsPerPage(Number(e.target.value))}
-          >
-            {[5, 10, 15].map((n) => (
-              <option key={n} value={n}>
-                {n}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
-    </div>
-  ), [globalFilterValue, statusFilter, visibleColumns, articlesdb.length]);
+    ),
+    [globalFilterValue, statusFilter, visibleColumns, articlesdb.length]
+  );
 
   const bottomContent = useMemo(() => (
     <div className="py-2 px-2 flex justify-between items-center">
@@ -352,6 +367,7 @@ const filteredItems = useMemo(() => {
     <div className="space-y-4">
       <Table
         aria-label="Articles Table"
+        isVirtualized
         isStriped
         sortDescriptor={sortDescriptor}
         onSortChange={setSortDescriptor}
@@ -374,7 +390,9 @@ const filteredItems = useMemo(() => {
         <TableBody emptyContent="No articles found" items={paginatedItems}>
           {(item) => (
             <TableRow key={item.$id}>
-              {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+              {(columnKey) => (
+                <TableCell>{renderCell(item, columnKey)}</TableCell>
+              )}
             </TableRow>
           )}
         </TableBody>

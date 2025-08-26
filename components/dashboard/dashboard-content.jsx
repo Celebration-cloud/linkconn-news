@@ -1,9 +1,11 @@
+/* eslint-disable react/react-in-jsx-scope */
 "use client";
 
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createPublisherThunk } from "@/store/publisherSlice";
+import { Chip } from "@heroui/react";
 
 export default function DashboardContent() {
   const { user, isLoaded, isSignedIn } = useUser();
@@ -36,7 +38,6 @@ export default function DashboardContent() {
       dispatch(createPublisherThunk({ userId: user.id }));
     }
     // Only run when these change
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded, isSignedIn, user?.id, revalidate]);
 
   // Call this function to revalidate (refresh) publisher data
@@ -56,9 +57,14 @@ export default function DashboardContent() {
         ))}
       </div>
       <div className="bg-slate-100 dark:bg-slate-800 p-6 rounded-md shadow-sm">
-        <h3 className="text-2xl text-center">
-          Welcome, {user?.firstName || "Publisher"}!
-        </h3>
+        <div className="flex items-center gap-4 justify-center w-full">
+          <p className="text-2xl text-center ">
+            Welcome, {user?.firstName || "Publisher"}!,
+          </p>
+          <Chip color={user.publicMetadata.role === "admin" ? "warning" : "success"} variant="bordered">
+            {user.publicMetadata.role}
+          </Chip>
+        </div>
         <article className="mt-4 text-center text-sm text-gray-500">
           {loading
             ? "Loading your publisher data..."

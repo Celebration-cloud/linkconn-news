@@ -2,7 +2,6 @@
 
 "use client";
 
-
 import { useForm, Controller } from "react-hook-form";
 import React,{ useEffect, useState } from "react";
 import PreviewModal from "./PreviewModal";
@@ -55,7 +54,7 @@ export default function DashboardCreate() {
   const router = useRouter();
   // const [isLoadingDraft, setIsLoadingDraft] = useState(false);
   // const [isLoadingPublish, setIsLoadingPublish] = useState(false);
-  console.log(publisher);
+  
   const { user } = useUser();
   const {
     control,
@@ -69,6 +68,7 @@ export default function DashboardCreate() {
       title: "",
       summary: "",
       category: "",
+      newsSection: "",
       tags: "",
       content: "",
       cover: null,
@@ -84,7 +84,7 @@ export default function DashboardCreate() {
   const content = watch("content");
   const title = watch("title");
   const summary = watch("summary");
-  console.log("cover:", cover);
+  
 
   const plainContent = stripHtml(content);
   const wordCount = countWords(plainContent);
@@ -106,6 +106,7 @@ export default function DashboardCreate() {
             cover: article.cover || null,
             isFeatured: article.isFeatured || false,
             content: "",
+            newsSection: article.newsSection,
           });
           if (article.status === "published") {
             setWasPublished(true); // 🆕
@@ -275,6 +276,30 @@ export default function DashboardCreate() {
             )}
           />
           <Controller
+            name="newsSection"
+            control={control}
+            rules={{ required: "Please select a News Section." }}
+            render={({ field }) => (
+              <Select
+                label="News Section"
+                labelPlacement="outside"
+                placeholder="Select a section"
+                selectedKeys={field.value ? [field.value] : []}
+                onSelectionChange={(keys) => {
+                  const selected = Array.from(keys)[0];
+                  field.onChange(selected);
+                }}
+                isInvalid={!!errors.newsSection}
+                errorMessage={errors.newsSection?.message}
+              >
+                {siteConfig.newsSections.map((section) => (
+                  <SelectItem key={section}>{section}</SelectItem>
+                ))}
+              </Select>
+            )}
+          />
+
+          <Controller
             name="tags"
             control={control}
             render={({ field }) => (
@@ -293,7 +318,7 @@ export default function DashboardCreate() {
             <CoverUpload
               value={watch("cover")}
               onImageUpload={(url) => {
-                console.log("✅ Uploaded cover URL:", url);
+                
                 setValue("cover", url, { shouldValidate: true });
               }}
             />

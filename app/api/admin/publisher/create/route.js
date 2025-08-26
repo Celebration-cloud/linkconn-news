@@ -1,11 +1,13 @@
-import { databases, ID } from "@/lib/appwrite";
-import { Permission, Query, Role } from "appwrite";
+import { databases } from "@/lib/appwrite";
 import { getAuth } from "@clerk/nextjs/server";
+
+const collectionId = "687a7fc200174c8e82a6";
+const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_ADMIN_DB_ID;
+
 
 export async function POST(req) {
   try {
     const { userId } = getAuth(req);
-
     if (!userId) {
       return Response.json(
         { success: false, error: "Unauthorized" },
@@ -13,37 +15,41 @@ export async function POST(req) {
       );
     }
 
-    // Check if publisher already exists
-    const collectionId = "687a7fc200174c8e82a6"; // <-- Replace with your actual collection ID if different
-    const existing = await databases.listDocuments(
-      process.env.NEXT_PUBLIC_APPWRITE_ADMIN_DB_ID,
-      collectionId,
-      [Query.equal("userId", userId)]
-    );
-
-    let publisherDoc;
-
-    if (existing.total > 0) {
-      // If exists, return the existing publisher
-      publisherDoc = existing.documents[0];
-    } else {
-      // If not, create a new publisher with permissions
-
-      publisherDoc = await databases.createDocument(
-        process.env.NEXT_PUBLIC_APPWRITE_ADMIN_DB_ID,
+    try {
+      // Create publisher doc (id = userId enforces uniqueness)
+      const publisherDoc = await databases.createDocument(
+        DB_ID,
         collectionId,
-        ID.unique(),
+        userId,
         {
           userId,
           published: 0,
           liked: 0,
           followers: 0,
           following: 0,
-        },
+        }
       );
-    }
 
-    return Response.json({ success: true, data: publisherDoc });
+
+      return Response.json({
+        success: true,
+        publisher: publisherDoc,
+      });
+    } catch (err) {
+      if (err.code === 409) {
+        // Already exists
+        const existing = await databases.getDocument(
+          DB_ID,
+          collectionId,
+          userId
+        );
+        return Response.json({
+          success: true,
+          data: existing,
+        });
+      }
+      throw err;
+    }
   } catch (error) {
     return Response.json(
       { success: false, error: error.message },

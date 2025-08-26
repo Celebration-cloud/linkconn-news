@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
+import React from "react"
 import clsx from "clsx";
 import { useSidebar } from "@/context/sidebar-context";
 import { siteConfig } from "@/config/site";

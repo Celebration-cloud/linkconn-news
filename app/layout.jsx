@@ -9,6 +9,7 @@ import { Navbar } from "@/components/navbar";
 import { CookieBanner } from "@/components/cookie-banner";
 import Head from "next/head";
 import { LayoutWrapper } from "@/components/layout-wrapper";
+import React from "react";
 
 // You can still export metadata and viewport in plain JS
 export const metadata = {

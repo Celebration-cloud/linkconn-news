@@ -1,8 +1,9 @@
+/* eslint-disable react/prop-types */
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import React from "react"
+import { usePathname } from "next/navigation";
 import { Navbar } from "@/components/navbar";
-import { useEffect } from "react";
 
 // Define routes where Navbar should be hidden
 const hiddenNavbarRoutes = [
@@ -14,6 +15,11 @@ const hiddenNavbarRoutes = [
   "/admin",
   "/admin/publish",
   "/admin/content-library",
+  "/admin/settings",
+  "/admin/accept-invite/sign-up",
+  "/admin/accept-invite",
+  "/admin/settings/control-panel",
+  "/admin/settings/manage-device",
   "/admin/content-library/comments",
 ];
 
