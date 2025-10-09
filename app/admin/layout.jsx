@@ -1,3 +1,6 @@
+/* eslint-disable react/prop-types */
+
+"use client";
 import DashboardNavbar from "@/components/dashboard/dashboard-navbar";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-side-bar";
 import { SpinnerLoading } from "@/components/spinner-loading";
@@ -33,4 +36,4 @@ export default function Layout({ children }) {
   );
 }
 
-export const revalidate = 0
+// export const revalidate = 0

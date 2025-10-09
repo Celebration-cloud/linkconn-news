@@ -3,7 +3,7 @@
 "use client";
 
 import { useForm, Controller } from "react-hook-form";
-import React,{ useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import PreviewModal from "./PreviewModal";
 import CoverUpload from "./cover-upload";
 import { Editor } from "primereact/editor";
@@ -14,6 +14,8 @@ import {
   Button,
   Select,
   SelectItem,
+  RadioGroup,
+  Radio,
 } from "@heroui/react";
 import { addToast } from "@heroui/react";
 import { siteConfig } from "@/config/site";
@@ -21,11 +23,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import { updatePublisherThunk } from "@/store/publisherSlice";
-import { createArticleThunk, fetchArticleByIdThunk, updateArticleThunk } from "@/store/articleSlice";
+import {
+  createArticleThunk,
+  fetchArticleByIdThunk,
+  updateArticleThunk,
+} from "@/store/articleSlice";
 import { SpinnerLoading } from "../spinner-loading";
 
-const MAX_WORDS = 800;
-const MAX_CHARACTERS = 5000;
+const MAX_WORDS = 1000;
+const MAX_CHARACTERS = 7000;
 
 // Helper functions
 function stripHtml(html) {
@@ -47,20 +53,18 @@ function countChars(text) {
 export default function DashboardCreate() {
   const publisher = useSelector((state) => state.publisher.data);
   const [isLoading, setIsLoading] = useState(false);
-  const [wasPublished, setWasPublished] = useState(false); // 🆕
-  
+  const [wasPublished, setWasPublished] = useState(false);
 
   const dispatch = useDispatch();
   const router = useRouter();
-  // const [isLoadingDraft, setIsLoadingDraft] = useState(false);
-  // const [isLoadingPublish, setIsLoadingPublish] = useState(false);
-  
+
   const { user } = useUser();
   const {
     control,
     handleSubmit,
     formState: { errors },
     setValue,
+    register,
     reset,
     watch,
   } = useForm({
@@ -73,6 +77,7 @@ export default function DashboardCreate() {
       content: "",
       cover: null,
       isFeatured: false,
+      placement: "none", // <- added default
     },
   });
 
@@ -81,16 +86,33 @@ export default function DashboardCreate() {
   const articleId = searchParams.get("aid");
 
   const cover = watch("cover");
+  // Register rules for cover (required + basic URL check)
+  register("cover", {
+    required: "Cover image is required",
+    validate: (value) => {
+      if (!value) return "Please upload a cover image";
+      const urlPattern = /^https?:\/\/.+/i;
+      return urlPattern.test(value) || "Cover must be a valid URL";
+    },
+  });
+
   const content = watch("content");
   const title = watch("title");
   const summary = watch("summary");
-  
 
   const plainContent = stripHtml(content);
   const wordCount = countWords(plainContent);
   const charCount = countChars(plainContent);
   const isWordLimitExceeded = wordCount > MAX_WORDS;
   const isCharLimitExceeded = charCount > MAX_CHARACTERS;
+
+  // placement options fallback to siteConfig if provided
+  const placements = siteConfig?.placements || [
+    { key: "front-page", label: "Front Page" },
+    { key: "breaking", label: "Breaking News" },
+    { key: "top-stories", label: "Top Stories" },
+    { key: "none", label: "None" },
+  ];
 
   useEffect(() => {
     if (articleId) {
@@ -107,11 +129,12 @@ export default function DashboardCreate() {
             isFeatured: article.isFeatured || false,
             content: "",
             newsSection: article.newsSection,
+            placement: article.placement || "", // <- restore placement when editing
           });
           if (article.status === "published") {
-            setWasPublished(true); // 🆕
+            setWasPublished(true);
           }
-          
+
           setTimeout(() => {
             setValue("content", article.content);
           }, 0);
@@ -130,13 +153,14 @@ export default function DashboardCreate() {
         .filter(Boolean),
       status,
       authorName: user.fullName,
-      authorRole: "admin",
+      authorRole: user.publicMetadata.role || "admin",
       clicks: 0,
       likes: 0,
       dislikes: 0,
       comments: 0,
       shares: 0,
       impressions: 0,
+      placement: data.placement || "none", // <- include placement in payload
       slug: data.title
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
@@ -149,13 +173,16 @@ export default function DashboardCreate() {
       if (articleId) {
         dispatch(updateArticleThunk({ id: articleId, data: articleData }));
       } else {
+        
         dispatch(createArticleThunk(articleData));
       }
+      console.log(articleData.status);
       // Only update publisher stats if new article is published
       if (articleData.status === "published") {
+        const addPublish = publisher?.published + 1;
         dispatch(
           updatePublisherThunk({
-            published: publisher?.published + 1,
+            published: addPublish,
             liked: publisher?.liked,
             followers: publisher?.followers,
             following: publisher?.following,
@@ -186,7 +213,7 @@ export default function DashboardCreate() {
     return;
   }
 
-  if (articleId && isLoading) return (<SpinnerLoading />);
+  if (articleId && isLoading) return <SpinnerLoading />;
 
   return (
     <form
@@ -221,7 +248,7 @@ export default function DashboardCreate() {
             render={({ field, fieldState: { error } }) => (
               <HeroInput
                 {...field}
-                label="Title"
+                label="Headline / Title"
                 labelPlacement="outside"
                 className="!opacity-100 !visible !block"
                 placeholder="Headline of your news..."
@@ -269,7 +296,7 @@ export default function DashboardCreate() {
                 isInvalid={!!errors.category}
                 errorMessage={errors.category?.message}
               >
-                {siteConfig.categories.map((cat) => (
+                {siteConfig.categories?.map((cat) => (
                   <SelectItem key={cat.key}>{cat.label}</SelectItem>
                 ))}
               </Select>
@@ -299,6 +326,31 @@ export default function DashboardCreate() {
             )}
           />
 
+          {/* Placement radio group */}
+          <Controller
+            name="placement"
+            control={control}
+            render={({ field }) => (
+              <div>
+                <label className="block text-sm font-semibold mb-2">
+                  Placement
+                </label>
+                <RadioGroup
+                  label={null}
+                  orientation="horizontal"
+                  value={field.value || ""}
+                  onValueChange={(val) => field.onChange(val)}
+                >
+                  {placements.map((p) => (
+                    <Radio key={p.key} value={p.key} size="md">
+                      {p.label}
+                    </Radio>
+                  ))}
+                </RadioGroup>
+              </div>
+            )}
+          />
+
           <Controller
             name="tags"
             control={control}
@@ -311,34 +363,55 @@ export default function DashboardCreate() {
               />
             )}
           />
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold mb-1 text-gray-700 dark:text-gray-300">
-              Cover Image
-            </label>
-            <CoverUpload
-              value={watch("cover")}
-              onImageUpload={(url) => {
-                
-                setValue("cover", url, { shouldValidate: true });
-              }}
-            />
+          <Controller
+            name="cover"
+            control={control}
+            rules={{
+              required: "Cover image is required",
+              validate: (value) => {
+                if (!value) return "Please upload a cover image";
+                const urlPattern = /^https?:\/\/.+/i;
+                return urlPattern.test(value) || "Cover must be a valid URL";
+              },
+            }}
+            render={({ field }) => (
+              <div className="space-y-2">
+                <label
+                  className={`${
+                    errors.cover ? "text-sm text-red-500 mt-2" : ""
+                  } block text-sm font-semibold mb-1`}
+                >
+                  Cover Image
+                </label>
 
-            {cover && (
-              <Image
-                src={cover}
-                alt="Cover preview"
-                unoptimized={true}
-                width={800} // or whatever size fits your design
-                height={192} // for h-48 (48 x 4 = 192px)
-                className="mt-3 w-full h-48 object-cover rounded-md"
-              />
+                <div
+                  className={`${errors.cover ? "border border-red-500" : ""}`}
+                >
+                  <CoverUpload
+                    value={field.value}
+                    onImageUpload={(url) => field.onChange(url)}
+                  />
+                </div>
+
+                {field.value && (
+                  <Image
+                    src={field.value}
+                    alt="Cover preview"
+                    unoptimized={true}
+                    width={800}
+                    height={192}
+                    className="mt-3 w-full h-48 object-cover rounded-md"
+                  />
+                )}
+
+                {errors.cover && (
+                  <p className="text-sm text-red-500 mt-2">
+                    {errors.cover.message}
+                  </p>
+                )}
+              </div>
             )}
-            {errors.cover && (
-              <p className="text-sm text-red-500 mt-2">
-                {errors.cover.message}
-              </p>
-            )}
-          </div>
+          />
           <Controller
             name="isFeatured"
             control={control}
@@ -355,7 +428,11 @@ export default function DashboardCreate() {
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-semibold mb-1 text-gray-700 dark:text-gray-300">
+          <label
+            className={`${
+              errors.cover ? "text-sm text-red-500 mt-2" : ""
+            } block text-sm font-semibold mb-1`}
+          >
             Article Content
           </label>
           <Controller
@@ -381,7 +458,9 @@ export default function DashboardCreate() {
                 value={field.value}
                 onTextChange={(e) => field.onChange(e.htmlValue)}
                 style={{ height: "350px" }}
-                className={`rounded-md ${errors.content ? "border border-red-500" : ""}`}
+                className={`rounded-md ${
+                  errors.content ? "border border-red-500" : ""
+                }`}
               />
             )}
           />

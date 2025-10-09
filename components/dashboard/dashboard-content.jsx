@@ -5,7 +5,7 @@ import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createPublisherThunk } from "@/store/publisherSlice";
-import { Chip } from "@heroui/react";
+import { Button, Chip } from "@heroui/react";
 
 export default function DashboardContent() {
   const { user, isLoaded, isSignedIn } = useUser();
@@ -13,7 +13,7 @@ export default function DashboardContent() {
   const publisher = useSelector((state) => state.publisher.data);
   const loading = useSelector((state) => state.publisher.loading);
   const [revalidate, setRevalidate] = useState(false);
-
+  
   const dashboard = [
     {
       title: "Published",
@@ -61,7 +61,10 @@ export default function DashboardContent() {
           <p className="text-2xl text-center ">
             Welcome, {user?.firstName || "Publisher"}!,
           </p>
-          <Chip color={user.publicMetadata.role === "admin" ? "warning" : "success"} variant="bordered">
+          <Chip
+            color={user.publicMetadata.role === "admin" ? "warning" : "success"}
+            variant="bordered"
+          >
             {user.publicMetadata.role}
           </Chip>
         </div>
@@ -73,12 +76,13 @@ export default function DashboardContent() {
               : "No publisher data found."}
         </article>
         <div className="flex justify-center mt-4">
-          <button
+          <Button
+            disabled={loading}
             className="px-4 py-2 bg-primary text-white rounded"
-            onClick={handleRevalidate}
+            onPress={handleRevalidate}
           >
             Revalidate
-          </button>
+          </Button>
         </div>
       </div>
     </>

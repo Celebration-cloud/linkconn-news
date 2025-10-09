@@ -1,9 +1,10 @@
 /* eslint-disable react/react-in-jsx-scope */
-import ArticleTable from "@/components/dashboard/ArticleTable/ArticleTable";
-// import { ArticleTable } from "@/components/dashboard/ArticleTable";
-import ArticleTabsLayout from "@/components/dashboard/ArticleTabsLayout";
-import { SpinnerLoading } from "@/components/spinner-loading";
-import { Suspense } from "react";
+// import ArticleTable from "@/components/dashboard/ArticleTable/ArticleTable";
+import ArticleTable2 from "@/components/dashboard/ArticleTable2";
+// import ArticleTabsLayout from "@/components/dashboard/ArticleTabsLayout";
+import { ArticleProvider } from "@/context/ArticleProvider";
+// import { SpinnerLoading } from "@/components/spinner-loading";
+// import { Suspense } from "react";
 
 export const metadata = {
   title: "Article Management",
@@ -12,18 +13,15 @@ export const metadata = {
 
 export default function ContentLibraryPage() {
  return (
-   <ArticleTabsLayout>
-     <div>
-       <h1 className="text-2xl font-bold mb-4">Content Library</h1>
-       <p className=" mb-6 ">
-         Manage your articles, drafts, and published content.
-       </p>
-       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md">
-         <Suspense fallback={<SpinnerLoading />}>
-           <ArticleTable />
-         </Suspense>
-       </div>
-     </div>
-   </ArticleTabsLayout>
+   <ArticleProvider>
+         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+           {/* <Suspense fallback={<SpinnerLoading />}> */}
+           {/* <ArticleTable /> */}
+           <ArticleTable2 />
+           {/* </Suspense> */}
+         </div>
+   </ArticleProvider>
  );
 }
+
+export const revalidate = 0; // Disable caching for dynamic content

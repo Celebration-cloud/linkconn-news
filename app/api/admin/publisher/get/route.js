@@ -1,10 +1,13 @@
+/* eslint-disable no-undef */
 import { databases } from "@/lib/appwrite";
 import { Permission, Query, Role } from "appwrite";
 import { getAuth } from "@clerk/nextjs/server";
 
 export async function GET(req) {
   try {
-    const { userId } = getAuth(req);
+    const auth = getAuth(req);
+    const userId = auth?.userId;
+    console.log(userId);
 
     if (!userId) {
       return Response.json(

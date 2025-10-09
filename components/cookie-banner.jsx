@@ -1,23 +1,27 @@
+/* eslint-disable react/react-in-jsx-scope */
 "use client";
 import { useEffect, useState } from "react";
 
 export const CookieBanner = () => {
-  const [accepted, setAccepted] = useState(true);
+  const [mounted, setMounted] = useState(false);
+  const [accepted, setAccepted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const consent = localStorage.getItem("cookie-consent");
-    if (!consent) setAccepted(false);
+    if (consent === "true") setAccepted(true);
   }, []);
 
-  const acceptCookies = () => {
+  const acceptCookies = async () => {
     localStorage.setItem("cookie-consent", "true");
     setAccepted(true);
+    await fetch("/api/public/cookies/init", { method: "POST" });
   };
 
-  if (accepted) return null;
+  if (!mounted || accepted) return null; // ensures it only renders client-side
 
   return (
-    <div className="fixed bottom-0 w-full bg-black text-white px-4 py-3 text-sm flex justify-between items-center z-50">
+    <div className="fixed bottom-20 w-full bg-black text-white px-4 py-3 text-sm flex justify-between items-center z-50">
       <span>We use cookies to improve your experience on Linkcon News.</span>
       <button
         onClick={acceptCookies}
@@ -27,4 +31,4 @@ export const CookieBanner = () => {
       </button>
     </div>
   );
-}
+};

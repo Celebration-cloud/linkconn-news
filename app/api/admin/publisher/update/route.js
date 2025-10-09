@@ -43,6 +43,7 @@ export async function PUT(req) {
         following,
       },
     );
+    console.log(response)
 
     return Response.json({ success: true, data: response });
   } catch (error) {

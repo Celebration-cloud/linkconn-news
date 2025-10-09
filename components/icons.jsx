@@ -1,3 +1,8 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react/react-in-jsx-scope */
+
+import Image from "next/image";
+
 // components/Icons.jsx
 export const MailIcon = (props) => (
   <svg
@@ -40,26 +45,18 @@ export const LockIcon = (props) => (
 );
 
 
-export const Logo = ({
-  size = 36,
-  width,
-  height,
-  ...props
-}) => (
-  <svg
-    fill="none"
-    height={size || height}
-    viewBox="0 0 32 32"
-    width={size || width}
-    {...props}
-  >
-    <path
-      clipRule="evenodd"
-      d="M17.6482 10.1305L15.8785 7.02583L7.02979 22.5499H10.5278L17.6482 10.1305ZM19.8798 14.0457L18.11 17.1983L19.394 19.4511H16.8453L15.1056 22.5499H24.7272L19.8798 14.0457Z"
-      fill="currentColor"
-      fillRule="evenodd"
+export const Logo = ({ width = 100, height = 100, ...props }) => (
+  <div {...props}>
+    <Image
+      src="/favicon.ico"
+      width={width}
+      height={height}
+      quality={100}
+      priority
+      alt="logo"
     />
-  </svg>
+    <small className="text-xs block opacity-80">Truth. Balance. Clarity.</small>
+  </div>
 );
 
 export const DiscordIcon = ({

@@ -1,17 +1,18 @@
+/* eslint-disable react/prop-types */
 import "@/styles/globals.css";
 import clsx from "clsx";
 
-import { hideNavbar, Providers } from "./providers";
+import { Providers } from "./providers";
 
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
-import { Navbar } from "@/components/navbar";
 import { CookieBanner } from "@/components/cookie-banner";
 import Head from "next/head";
 import { LayoutWrapper } from "@/components/layout-wrapper";
 import React from "react";
+import { ScrollTop } from "primereact/scrolltop";
 
-// You can still export metadata and viewport in plain JS
+// Metadata API for Next.js
 export const metadata = {
   title: {
     default: siteConfig.name,
@@ -19,7 +20,22 @@ export const metadata = {
   },
   description: siteConfig.description,
   icons: {
-    icon: "/favicon.ico",
+    icon: siteConfig.logo,
+  },
+  openGraph: {
+    type: "website",
+    title: siteConfig.name,
+    description: siteConfig.description,
+    url: siteConfig.url,
+    siteName: siteConfig.name,
+    images: [
+      {
+        url: siteConfig.logo,
+        width: 512,
+        height: 512,
+        alt: "Linkcon News logo",
+      },
+    ],
   },
 };
 
@@ -40,7 +56,7 @@ export default function RootLayout({ children }) {
         <meta property="og:description" content={siteConfig.description} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://linkcon.news" />
-        <meta property="og:image" content="/og-image.jpg" />
+        <meta property="og:image" content="/public/favicon.ico" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={siteConfig.name} />
         <meta name="twitter:description" content={siteConfig.description} />
@@ -58,6 +74,11 @@ export default function RootLayout({ children }) {
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
           <LayoutWrapper>{children}</LayoutWrapper>
           <CookieBanner />
+          <ScrollTop
+            threshold={200}
+            className="bg-blue-600 hover:bg-blue-700 shadow-lg rounded-full w-12 h-12 flex items-center justify-center transition-all duration-300"
+            icon="pi pi-arrow-up text-white text-xl"
+          />
         </Providers>
       </body>
     </html>

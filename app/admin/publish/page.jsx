@@ -1,3 +1,4 @@
+/* eslint-disable react/react-in-jsx-scope */
 // app/admin/publish/page.tsx
 import DashboardCreate from "@/components/dashboard/dashboard-create";
 

@@ -1,3 +1,4 @@
+/* eslint-disable react/react-in-jsx-scope */
 // layout/LoginLayout.jsx
 
 import { DashboardLoginNav } from "@/components/dashboard/DashboardLoginNav";

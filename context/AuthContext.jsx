@@ -56,10 +56,10 @@ console.log(pathname)
     allInviteEmail.includes(userEmail) &&
     pathname !== "/admin/login"
   ) {
-     const handleReturn = async () => {
-       await signOut(); // clears Clerk session
-       router.replace("/admin/login"); // go straight to login page
-     };
+    const handleReturn = async () => {
+      await signOut(); // clears Clerk session
+      router.replace("/admin/login"); // go straight to login page
+    };
     return (
       <div className="flex justify-center items-center min-h-screen bg-gray-50">
         <Card

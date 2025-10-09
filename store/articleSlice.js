@@ -11,8 +11,15 @@ import { showToast } from "@/utils/toast";
 // Fetch all articles by logged-in user
 export const fetchArticlesThunk = createAsyncThunk(
   "article/fetchMy",
-  async () => {
-    const res = await fetchMyArticles();
+  async ({ first = 0, rows = 10, sortField, sortOrder, filters }) => {
+    const res = await fetchMyArticles({
+      first,
+      rows,
+      sortField,
+      sortOrder,
+      filters,
+    });
+    console.log("API response:", res);
     return res;
   }
 );
@@ -57,6 +64,7 @@ export const articleSlice = createSlice({
   name: "article",
   initialState: {
     articles: [],
+    totalRecords: 0,
     loading: false,
     error: null,
   },
@@ -68,17 +76,15 @@ export const articleSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchArticlesThunk.fulfilled, (state, action) => {
+        // make sure to align with your backend response
         state.articles = action.payload.data || [];
+        state.totalRecords =
+          action.payload.totalRecords || action.payload.total || 0; // ✅ handle naming
         state.loading = false;
       })
       .addCase(fetchArticlesThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
-        showToast({
-          title: "Failed to fetch articles",
-          description: action.error.message,
-          color: "danger",
-        });
       })
 
       // CREATE ARTICLE

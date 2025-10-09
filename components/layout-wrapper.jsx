@@ -1,11 +1,13 @@
 /* eslint-disable react/prop-types */
 "use client";
 
-import React from "react"
+import React from "react";
 import { usePathname } from "next/navigation";
 import { Navbar } from "@/components/navbar";
+import { Footer } from "./footer/Footer";
+import { AdSlot } from "./advertisement/AdSlot";
 
-// Define routes where Navbar should be hidden
+// Routes where Navbar (and ads) should be hidden
 const hiddenNavbarRoutes = [
   "/auth",
   "/login",
@@ -26,16 +28,43 @@ const hiddenNavbarRoutes = [
 export const LayoutWrapper = ({ children }) => {
   const pathname = usePathname();
   const hideNavbar = hiddenNavbarRoutes.includes(pathname);
-  
+
   return (
     <div className="relative flex flex-col min-h-screen">
+      {/* Navbar */}
       {!hideNavbar && <Navbar />}
-      <main className="container mx-auto max-w-7xl flex-grow">{children}</main>
+
+      {/* Top Ad Banner */}
       {!hideNavbar && (
-        <footer className="w-full flex items-center justify-center py-4 text-sm text-muted-foreground">
-          © {new Date().getFullYear()} Linkcon News. All rights reserved.
-        </footer>
+        <div className="border-b">
+          <AdSlot type="hero" />
+        </div>
       )}
+
+      {/* Main Content with Side Ad */}
+      <main className="container mx-auto max-w-7xl px-0 flex-grow">
+        {/* Main Section */}
+        <div className="flex-1">
+          {children}
+
+          {/* Inline Ad inside content */}
+          {!hideNavbar && (
+            <div className="my-10">
+              <AdSlot type="inline" />
+            </div>
+          )}
+        </div>
+      </main>
+
+      {/* Bottom Ad Banner */}
+      {!hideNavbar && (
+        <div className="border-t">
+          <AdSlot type="hero" />
+        </div>
+      )}
+
+      {/* Footer */}
+      {!hideNavbar && <Footer />}
     </div>
   );
 };

@@ -1,3 +1,4 @@
+/* eslint-disable react/react-in-jsx-scope */
 "use client";
 
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/navbar";
@@ -6,7 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "../theme-switch";
-import { SignInButton, SignUpButton } from "@clerk/nextjs";
+import { SignInButton } from "@clerk/nextjs";
 
 export const DashboardLoginNav = () => {
 
@@ -41,18 +42,6 @@ export const DashboardLoginNav = () => {
               Login
             </Button>
           </SignInButton>
-        </NavbarItem>
-
-        <NavbarItem>
-          <SignUpButton redirectUrl="/admin/dashboard">
-            <Button
-              size="sm"
-              color="primary"
-              variant="flat"
-            >
-              Get Started
-            </Button>
-          </SignUpButton>
         </NavbarItem>
 
         <NavbarItem>
