@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { createClerkClient, getAuth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 

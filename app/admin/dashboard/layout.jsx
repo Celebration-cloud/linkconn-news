@@ -1,5 +1,6 @@
-import { siteConfig } from "@/config/site";
-import { NextThemesProvider } from "next-themes";
+/* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable react/prop-types */
+
 
 export default function Layout({ children }) {
     

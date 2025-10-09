@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react/react-in-jsx-scope */
 "use client";
 
 import { useEffect } from "react";
@@ -29,7 +31,7 @@ export const Error = ({ error, reset }) => {
           Something went wrong
         </h2>
         <p className="text-muted-foreground">
-          We couldn't load this page right now. Please try again or contact
+          We couldn&lsquo;t load this page right now. Please try again or contact
           support if the issue persists.
         </p>
         <button

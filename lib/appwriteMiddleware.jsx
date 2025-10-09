@@ -1,7 +1,7 @@
 import { account } from "@/lib/appwrite"; // Make sure env is loaded
 import { cookies } from "next/headers"; // Only in Next.js 13+ (app dir)
 
-export async function validateAppwriteSession(req) {
+export async function validateAppwriteSession() {
   try {
     const cookieJar = cookies();
     const sessionCookie = cookieJar.get("a_session_projectId");
@@ -12,6 +12,7 @@ export async function validateAppwriteSession(req) {
     const user = await account.get();
     return !!user;
   } catch (error) {
+    console.error("Error validating Appwrite session:", error);
     return false;
   }
 }

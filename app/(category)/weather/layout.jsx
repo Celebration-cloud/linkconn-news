@@ -15,16 +15,12 @@ export const metadata = buildMetadata(
   "Get the latest weather updates, forecasts, and alerts from Linkcon News."
 );
 
-export default async function WeatherLayout({ children, searchParams }) {
-  const sp = await searchParams;
-  const page = parseInt(sp?.page || "1", 10);
-  const limit = 10;
-  const offset = (page - 1) * limit;
+export default async function WeatherLayout({ children }) {
 
   const { documents = [] } = await getArticles({
     category: "weather",
-    limit,
-    offset,
+    limit: 10,
+    offset: 0,
   });
 
   return (

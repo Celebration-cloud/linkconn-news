@@ -1,3 +1,4 @@
+/* eslint-disable react/react-in-jsx-scope */
 // components/SignUpModal.jsx
 "use client";
 
@@ -11,7 +12,6 @@ import {
   useDisclosure,
   Input,
   Checkbox,
-  Link,
 } from "@heroui/react";
 import { MailIcon, LockIcon } from "../icons"; // Import your icons
 

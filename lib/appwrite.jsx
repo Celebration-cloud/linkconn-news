@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { Client, Account, ID, Databases, OAuthProvider, Storage } from "appwrite";
 
 const client = new Client()

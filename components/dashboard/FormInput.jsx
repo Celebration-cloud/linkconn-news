@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react/react-in-jsx-scope */
 import { Input } from "@heroui/input";
 
 const FormInput = ({ label, value, setValue, name, placeholder, error }) => (

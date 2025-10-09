@@ -13,16 +13,12 @@ export const metadata = buildMetadata(
   "Investigative reports and in-depth journalism from Linkcon News."
 );
 
-export default async function InvestigationsLayout({ children, searchParams }) {
-  const sp = await searchParams;
-  const page = parseInt(sp?.page || "1", 10);
-  const limit = 10;
-  const offset = (page - 1) * limit;
+export default async function InvestigationsLayout({ children }) {
 
   const { documents = [] } = await getArticles({
-   category: "investigations",
-    limit,
-    offset,
+    category: "investigations",
+    limit: 10,
+    offset: 0,
   });
 
   return (

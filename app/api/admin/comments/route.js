@@ -11,36 +11,15 @@ function buildTree(comments, parentId = null) {
     .filter((c) => c.parentId === parentId)
     .map((c) => ({
       ...c,
-      replies: buildTree(comments, c.$id), // recursion for infinite nesting
+      replies: buildTree(comments, c.$id),
     }));
 }
-// ✅ Utility function to count total likes and dislikes (including nested replies)
-// function countLikesAndDislikes(comments) {
-//   let totalLikes = 0;
-//   let totalDislikes = 0;
 
-//   const traverse = (list) => {
-//     list.forEach((comment) => {
-//       totalLikes += comment.likes || 0;
-//       totalDislikes += comment.dislikes || 0;
-
-//       if (comment.replies && comment.replies.length > 0) {
-//         traverse(comment.replies);
-//       }
-//     });
-//   };
-  
-
-//   traverse(comments);
-//   return { totalLikes, totalDislikes };
-// }
-
-export const getVoteCounts = (userVotes = []) => {
+function getVoteCounts(userVotes = []) {
   const totalLikes = userVotes.filter((v) => v.endsWith(":like")).length;
   const totalDislikes = userVotes.filter((v) => v.endsWith(":dislike")).length;
   return { totalLikes, totalDislikes };
-};
-
+}
 
 export async function GET(req) {
   try {
@@ -51,20 +30,16 @@ export async function GET(req) {
       return NextResponse.json({ error: "Missing articleId" }, { status: 400 });
     }
 
-    // ✅ Fetch all comments flat
     const res = await databases.listDocuments(DB_ID, COLLECTION_ID, [
       Query.equal("articleId", articleId),
       Query.orderAsc("$createdAt"),
     ]);
 
     const comments = res.documents || [];
-    console.log("api comment: ", comments)
-    const { totalLikes, totalDislikes } = getVoteCounts(comments.flatMap(c => c.userVotes || []));
+    const { totalLikes, totalDislikes } = getVoteCounts(
+      comments.flatMap((c) => c.userVotes || [])
+    );
 
-    console.log("Likes:", totalLikes);
-    console.log("Dislikes:", totalDislikes);
-
-    // ✅ Build recursive nested structure
     const structuredComments = buildTree(comments);
 
     return NextResponse.json({
@@ -75,15 +50,10 @@ export async function GET(req) {
     });
   } catch (err) {
     console.error("❌ Error in GET /api/comments:", err);
-    return NextResponse.json(
-      { error: err.message || "Server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
 
-
-// ✅ POST comment
 export async function POST(req) {
   try {
     const body = await req.json();
@@ -112,15 +82,9 @@ export async function POST(req) {
       }
     );
 
-    // ✅ log for debugging
-    console.log("✅ New comment created:", newComment);
-
     return NextResponse.json(newComment);
   } catch (err) {
     console.error("❌ Error in POST /api/comments:", err);
-    return NextResponse.json(
-      { error: err.message || "Server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

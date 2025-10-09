@@ -1,4 +1,4 @@
-import { SignInButton, SignUpButton } from "@clerk/nextjs";
+import { SignInButton } from "@clerk/nextjs";
 import React from "react"
 import { Button } from "@heroui/button";
 import Image from "next/image";

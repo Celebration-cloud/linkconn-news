@@ -15,17 +15,13 @@ export const metadata = buildMetadata(
   "Latest updates on technology, gadgets, AI, and innovation from Linkcon News."
 );
 
-export default async function TechnologyLayout({ children, searchParams }) {
-  const sp = await searchParams;
-  const page = parseInt(sp?.page || "1", 10);
-  const limit = 10;
-  const offset = (page - 1) * limit;
+export default async function TechnologyLayout({ children }) {
 
   // Fetch technology articles from DB
   const { documents = [] } = await getArticles({
     section: "technology",
-    limit,
-    offset,
+    limit: 10,
+    offset: 0,
   });
 
   return (

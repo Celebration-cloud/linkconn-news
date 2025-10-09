@@ -25,10 +25,6 @@ import {
   TableCell,
   Input,
   Button,
-  DropdownTrigger,
-  Dropdown,
-  DropdownMenu,
-  DropdownItem,
   Pagination,
   Select,
   SelectItem,
@@ -57,8 +53,8 @@ const statusColorMap = {
 export default function ControlPanel() {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { invitedUsers, loading, allInvite } = useSelector((state) => state.controlPanel);
-  console.log(invitedUsers, allInvite)
+  const { invitedUsers, loading, } = useSelector((state) => state.controlPanel);
+  
   // Local states
   const [openInvite, setOpenInvite] = useState(false);
   const [email, setEmail] = useState("");

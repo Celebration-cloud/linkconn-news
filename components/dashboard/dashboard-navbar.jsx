@@ -1,26 +1,10 @@
 /* eslint-disable react/react-in-jsx-scope */
-"use client";
-
-import {
-  Navbar,
-  NavbarBrand,
-  NavbarContent,
-  NavbarItem,
-  Link,
-  Dropdown,
-  Badge,
-  Image,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-  addToast,
-  Avatar,
-} from "@heroui/react";
+"use client";;
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Image } from "@heroui/react";
 import { ThemeSwitch } from "../theme-switch";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useSidebar } from "@/context/sidebar-context";
-import { useUser, useClerk, UserButton, SignedIn } from "@clerk/nextjs";
-import { deletePublisher } from "@/lib/actions/publisher"; // make sure path is correct
+import { useUser, UserButton } from "@clerk/nextjs";
 
 export const AcmeLogo = () => (
   <svg fill="none" height="36" viewBox="0 0 32 32" width="36">
@@ -39,7 +23,7 @@ export default function DashboardNavbar() {
   const { toggleSidebar } = useSidebar();
   const pathname = usePathname();
   // const router = useRouter();
-  const { isLoaded, user } = useUser();
+  const { isLoaded } = useUser();
   // const { signOut } = useClerk();
 
   const hideNavbar = hiddenNavbarRoutes.includes(pathname);

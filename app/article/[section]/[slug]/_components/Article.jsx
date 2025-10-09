@@ -3,7 +3,7 @@
 "use client";
 
 import Image from "next/image";
-import { Chip, Button } from "@heroui/react";
+import { Chip } from "@heroui/react";
 import ShareBar from "./ShareBar";
 // import Comments from "./Comments";
 import CommentSection from "@/components/dashboard/comments/CommentsSection";
@@ -14,7 +14,7 @@ import Link from "next/link";
 import { SubscribeModal } from "@/components/modals/SubscribeModal";
 
 export default function Article({ related = [] }) {
-  const { article, visits, readingTime, articleRef } =
+  const { article, readingTime, articleRef } =
     useArticleMeta();
    console.log("Articleref:", articleRef.current)
   if (!article) return null;

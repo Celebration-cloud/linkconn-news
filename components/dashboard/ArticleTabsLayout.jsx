@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import React, { useState } from "react";
 
 export default function ArticleTabsLayout({ children }) {
-    const [revalidate, setRevalidate] = useState(false);
+    const [setRevalidate] = useState(false);
   const { articles, loading, error } = useSelector((state) => state.article);
 
   const articlesDb = articles;

@@ -13,16 +13,12 @@ export const metadata = buildMetadata(
   "Latest education news, policies, schools, and academic insights from Linkcon News."
 );
 
-export default async function EducationLayout({ children, searchParams }) {
-  const sp = await searchParams;
-  const page = parseInt(sp?.page || "1", 10);
-  const limit = 10;
-  const offset = (page - 1) * limit;
+export default async function EducationLayout({ children }) {
 
   const { documents = [] } = await getArticles({
     section: "education",
-    limit,
-    offset,
+    limit: 10,
+    offset: 0,
   });
 
   return (

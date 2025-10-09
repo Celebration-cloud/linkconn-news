@@ -1,10 +1,11 @@
+/* eslint-disable no-undef */
 export const runtime = "nodejs";
 
 import { auth } from "@clerk/nextjs/server";
 import { createClerkClient } from "@clerk/backend";
 import { NextResponse } from "next/server";
 import { databases } from "@/lib/appwrite";
-import { ID, Query } from "appwrite";
+import { Query } from "appwrite";
 
 // Backend Clerk client
 const clerkBackend = createClerkClient({

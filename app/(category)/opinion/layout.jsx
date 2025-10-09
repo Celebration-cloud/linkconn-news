@@ -15,17 +15,13 @@ export const metadata = buildMetadata(
   "Editorials, commentaries, and viewpoints from Linkcon News."
 );
 
-export default async function OpinionLayout({ children, searchParams }) {
-  const sp = await searchParams;
-  const page = parseInt(sp?.page || "1", 10);
-  const limit = 10;
-  const offset = (page - 1) * limit;
+export default async function OpinionLayout({ children }) {
 
   // Fetch opinion articles from DB
   const { documents = [] } = await getArticles({
     category: "opinion",
-    limit,
-    offset,
+    limit: 10,
+    offset: 0,
   });
 
   return (

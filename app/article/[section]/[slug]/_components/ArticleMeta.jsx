@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-/* eslint-disable react/prop-types */
 /* eslint-disable react/react-in-jsx-scope */
 // app/article/[slug]/_components/ArticleMeta.jsx
 "use client";

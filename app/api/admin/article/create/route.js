@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
+import { enforcePlacement } from "@/lib/actions/placementManager";
 import { databases, ID } from "@/lib/appwrite";
 import { getAuth } from "@clerk/nextjs/server";
-import { enforcePlacement } from "@/lib/placementManager";
 
 const collectionId = "687bbd84001df808c851"; // Replace with your actual collection ID
 const dbId = process.env.NEXT_PUBLIC_APPWRITE_ADMIN_DB_ID;

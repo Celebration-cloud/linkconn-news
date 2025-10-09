@@ -15,17 +15,13 @@ export const metadata = buildMetadata(
   "Latest sports news, scores, and highlights from Nigeria and around the world on Linkcon News."
 );
 
-export default async function SportLayout({ children, searchParams }) {
-  const sp = await searchParams;
-  const page = parseInt(sp?.page || "1", 10);
-  const limit = 10;
-  const offset = (page - 1) * limit;
+export default async function SportLayout({ children }) {
 
   // Fetch sport articles from DB
   const { documents = [] } = await getArticles({
     section: "sports",
-    limit,
-    offset,
+    limit: 10,
+    offset: 0,
   });
 
   return (

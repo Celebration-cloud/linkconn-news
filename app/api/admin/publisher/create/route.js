@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { databases } from "@/lib/appwrite";
 import { getAuth } from "@clerk/nextjs/server";
 

@@ -1,3 +1,4 @@
+/* eslint-disable react/react-in-jsx-scope */
 import CommentsSection from "@/components/dashboard/comments/CommentsSection";
 import { Divider } from "@heroui/react";
 import Image from "next/image";

@@ -1,7 +1,5 @@
-/* eslint-disable react/prop-types */
 /* eslint-disable react/react-in-jsx-scope */
-// import { SpinnerLoading } from "@/components/spinner-loading";
-// import { Suspense } from "react";
+/* eslint-disable react/prop-types */
 
 export const metadata = {
   title: "Article Management",

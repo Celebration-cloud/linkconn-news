@@ -1,6 +1,5 @@
 /* eslint-disable react/react-in-jsx-scope */
-"use client";
-
+"use client";;
 import {
   Navbar as HeroUINavbar,
   NavbarContent,
@@ -12,12 +11,6 @@ import {
 } from "@heroui/navbar";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
-import {
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-} from "@heroui/dropdown";
 import { Kbd } from "@heroui/kbd";
 import NextLink from "next/link";
 import { ThemeSwitch } from "@/components/theme-switch";

@@ -3,8 +3,6 @@
 import ArticleTable2 from "@/components/dashboard/ArticleTable2";
 // import ArticleTabsLayout from "@/components/dashboard/ArticleTabsLayout";
 import { ArticleProvider } from "@/context/ArticleProvider";
-// import { SpinnerLoading } from "@/components/spinner-loading";
-// import { Suspense } from "react";
 
 export const metadata = {
   title: "Article Management",
@@ -15,10 +13,9 @@ export default function ContentLibraryPage() {
  return (
    <ArticleProvider>
          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md">
-           {/* <Suspense fallback={<SpinnerLoading />}> */}
+
            {/* <ArticleTable /> */}
            <ArticleTable2 />
-           {/* </Suspense> */}
          </div>
    </ArticleProvider>
  );
