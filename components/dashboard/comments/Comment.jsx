@@ -2,8 +2,8 @@
 /* eslint-disable react/prop-types */
 "use client";
 
-import { Avatar } from "@heroui/avatar";
-import { Button } from "@heroui/button";
+import { Avatar } from "@heroui/react";
+import { Button } from "@heroui/react";
 
 export default function Comment({
   comment,

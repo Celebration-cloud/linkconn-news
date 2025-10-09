@@ -2,9 +2,9 @@
 /* eslint-disable react/react-in-jsx-scope */
 "use client";
 
-import { Button } from "@heroui/button";
-import { Textarea } from "@heroui/input"; // HeroUI multiline input
-import { Avatar } from "@heroui/avatar";
+import { Button } from "@heroui/react";
+import { Textarea } from "@heroui/react"; // HeroUI multiline input
+import { Avatar } from "@heroui/react";
 
 export default function ReplyBox({ value, onChange, onCancel, onSubmit }) {
   return (

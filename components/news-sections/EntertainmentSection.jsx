@@ -3,8 +3,8 @@
 "use client";
 
 import { Card, CardBody, CardFooter, CardHeader } from "@heroui/react";
-import { Button } from "@heroui/button";
-import { Image } from "@heroui/image";
+import { Button } from "@heroui/react";
+import { Image } from "@heroui/react";
 import NextLink from "next/link";
 import { motion } from "framer-motion";
 import SectionHeader from "./SectionHeader";

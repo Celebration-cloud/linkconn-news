@@ -1,7 +1,7 @@
 /* eslint-disable react/react-in-jsx-scope */
 "use client";
 
-import { Spinner } from "@heroui/spinner";
+import { Spinner } from "@heroui/react";
 
 const LoadingScreen = () => {
   return (

@@ -1,8 +1,8 @@
 /* eslint-disable react/react-in-jsx-scope */
 "use client";
 import NextLink from "next/link";
-import { Input } from "@heroui/input";
-import { Button } from "@heroui/button";
+import { Input } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { Logo } from "@/components/icons";
 import { usePathname } from "next/navigation";
 import SocialIcons from "../icons/SocialIcons";

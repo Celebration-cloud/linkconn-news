@@ -3,10 +3,9 @@
 
 import React from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { HeroUIProvider } from "@heroui/system";
+import { HeroUIProvider, ToastProvider } from "@heroui/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { PrimeReactProvider } from "primereact/api";
-import { ToastProvider } from "@heroui/react";
 import { Provider } from "react-redux";
 import { store } from "@/store";
 
@@ -17,13 +16,11 @@ import "primeicons/primeicons.css";
 export const Providers = ({ children, themeProps }) => {
   const router = useRouter();
   const pathname = usePathname();
-
-  // ❌ Disable toast for dynamic article routes
   const shouldShowToast = !pathname.startsWith("/article/section/");
 
   return (
     <HeroUIProvider navigate={router.push}>
-      {shouldShowToast && <ToastProvider />} {/* ✅ Only renders when allowed */}
+      {shouldShowToast && <ToastProvider />}
       <NextThemesProvider {...themeProps}>
         <PrimeReactProvider>
           <Provider store={store}>{children}</Provider>

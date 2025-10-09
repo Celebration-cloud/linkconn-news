@@ -9,8 +9,8 @@ import {
   voteOnComment,
 } from "@/store/commentsSlice";
 import CommentThread from "./CommentThread";
-import { Textarea } from "@heroui/input";
-import { Button } from "@heroui/button";
+import { Textarea } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { siteConfig } from "@/config/site";
 
 export default function CommentSection({

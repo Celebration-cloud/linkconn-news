@@ -1,8 +1,8 @@
 "use client";
 
+import { Button } from "@heroui/react";
 import Link from "next/link";
 import React from "react"
-import { Button } from "@heroui/button";
 
 export default function NotFound() {
   return (

@@ -6,7 +6,7 @@ import { SpinnerLoading } from "@/components/spinner-loading";
 import { fetchInvitedUsersThunk } from "@/store/controlPanelSlice";
 import { createPublisherThunk } from "@/store/publisherSlice";
 import { useClerk, useUser } from "@clerk/nextjs";
-import { Button } from "@heroui/button";
+import { Button } from "@heroui/react";
 import { Card, CardBody, CardHeader } from "@heroui/react";
 import { usePathname, useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useLayoutEffect } from "react";

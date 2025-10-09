@@ -1,8 +1,8 @@
 /* eslint-disable react/react-in-jsx-scope */
 "use client";
 
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/navbar";
-import { Button } from "@heroui/button";
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/react";
+import { Button } from "@heroui/react";
 import Link from "next/link";
 import Image from "next/image";
 import { siteConfig } from "@/config/site";

@@ -1,6 +1,6 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { Skeleton } from "@heroui/react";
-import { Spinner } from "@heroui/spinner";
+import { Spinner } from "@heroui/react";
 
 export const SpinnerLoading = () => {
   return (

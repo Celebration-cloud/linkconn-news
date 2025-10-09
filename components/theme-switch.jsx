@@ -4,7 +4,7 @@
 
 import { useTheme } from "next-themes";
 import { useIsSSR } from "@react-aria/ssr";
-import { useSwitch } from "@heroui/switch";
+import { useSwitch } from "@heroui/react";
 import { VisuallyHidden } from "@react-aria/visually-hidden";
 import clsx from "clsx";
 
