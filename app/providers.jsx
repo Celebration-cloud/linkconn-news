@@ -3,7 +3,7 @@
 
 import React from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { HeroUIProvider } from "@heroui/react";
+import { HeroUIProvider } from "@heroui/system";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { PrimeReactProvider } from "primereact/api";
 import { ToastProvider } from "@heroui/react";
@@ -23,8 +23,7 @@ export const Providers = ({ children, themeProps }) => {
 
   return (
     <HeroUIProvider navigate={router.push}>
-      {shouldShowToast && <ToastProvider />}{" "}
-      {/* ✅ Only renders when allowed */}
+      {shouldShowToast && <ToastProvider />} {/* ✅ Only renders when allowed */}
       <NextThemesProvider {...themeProps}>
         <PrimeReactProvider>
           <Provider store={store}>{children}</Provider>
