@@ -3,7 +3,7 @@
 
 import React from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { HeroUIProvider } from "@heroui/system";
+import { HeroUIProvider } from "@heroui/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { PrimeReactProvider } from "primereact/api";
 import { ToastProvider } from "@heroui/react";
