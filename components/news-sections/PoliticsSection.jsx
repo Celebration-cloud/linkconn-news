@@ -2,9 +2,9 @@
 /* eslint-disable react/react-in-jsx-scope */
 "use client";
 
-import { Card, CardBody } from "@heroui/react";
+import { Card, CardBody, Image } from "@heroui/react";
 import { motion } from "framer-motion";
-import { Image } from "@heroui/image";
+
 import NextLink from "next/link";
 import SectionHeader from "./SectionHeader";
 import GradientChip from "../chip/GradientChip";
