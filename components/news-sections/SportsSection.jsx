@@ -54,7 +54,7 @@ export default function SportsSection({ articles = [] }) {
   };
 
   return (
-    <section className="max-w-7xl mx-auto px-4 space-y-10">
+    <section className="max-w-7xl mx-auto px-2 space-y-10">
       {/* Section Header */}
       <SectionHeader
         title="Sports"
@@ -73,25 +73,30 @@ export default function SportsSection({ articles = [] }) {
         viewport={{ once: true }}
       >
         <Card className="relative overflow-hidden rounded-2xl shadow-lg group">
-          <div className="overflow-hidden">
+          <div className="w-full h-0 pb-[75%] sm:pb-[65%] md:pb-[56.25%] overflow-hidden relative min-h-[300px] md:min-h-[400px]">
             <Image
               src={hero.image}
               alt={hero.title}
               removeWrapper
-              className="w-full h-80 md:h-[480px] object-cover z-0 transition-transform duration-500 group-hover:scale-105"
+              fill
+              className="object-cover z-0 transition-transform duration-500 group-hover:scale-105"
             />
           </div>
-          <div className="absolute inset-0 bg-black/50 flex flex-col justify-end p-6">
+          <div className="absolute inset-0 bg-black/50 flex flex-col justify-end p-4 sm:p-6 md:p-8 lg:p-10">
             <GradientChip label="Sports" color={sectionColor} size="lg" />
-            <h2 className="text-2xl md:text-4xl font-bold text-white mb-2">
+            <h2 className="text-lg sm:text-xl md:text-3xl lg:text-4xl font-bold text-white mb-2 break-words">
               {hero.title}
             </h2>
-            <p className="text-sm text-gray-200 mb-3">{hero.date}</p>
-            <p className="text-gray-300 max-w-2xl">{hero.summary}</p>
+            <p className="text-xs sm:text-sm md:text-base text-gray-200 mb-2">
+              {hero.date}
+            </p>
+            <p className="text-xs sm:text-sm md:text-base text-gray-300 max-w-full sm:max-w-lg md:max-w-2xl line-clamp-3">
+              {hero.summary}
+            </p>
             <Button
               as={NextLink}
               href={`/article/sports/${hero.slug || hero.id}`}
-              className={`mt-4 w-fit ${buttonClasses}`}
+              className={`mt-3 sm:mt-4 w-fit ${buttonClasses}`}
             >
               Read More
             </Button>

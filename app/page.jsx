@@ -25,8 +25,8 @@ const WorldNewsSection = lazy(
 const BusinessSection = lazy(
   () => import("@/components/news-sections/BusinessSection")
 );
-const HeroFeaturedSection = lazy(
-  () => import("@/components/news-sections/HeroFeaturedSection")
+const HeroNewsSection = lazy(
+  () => import("@/components/news-sections/HeroNewsSection")
 );
 
 export default async function HomePage() {
@@ -49,43 +49,14 @@ export default async function HomePage() {
   console.log("Business: ", business);
   console.log("Entertainment: ", entertainment);
   console.log("World News: ", worldNews);
-  const featuredStory = {
-    id: "featured",
-    title: "Global Markets Shake as Oil Prices Surge Overnight",
-    summary:
-      "Investors react to sudden oil supply cuts as prices hit new highs, sparking concerns about inflation worldwide.",
-    image: "https://source.unsplash.com/1600x900/?news,breaking",
-    category: "Breaking News",
-  };
-
-  const trendingStories = [
-    {
-      id: 1,
-      title: "Tech Giants Report Record Profits",
-      date: "2025-08-27",
-      image: "https://source.unsplash.com/400x300/?technology",
-    },
-    {
-      id: 2,
-      title: "Sports Fans Celebrate Historic Win",
-      date: "2025-08-27",
-      image: "https://source.unsplash.com/400x300/?sports",
-    },
-    {
-      id: 3,
-      title: "Entertainment World Mourns a Legend",
-      date: "2025-08-27",
-      image: "https://source.unsplash.com/400x300/?entertainment",
-    },
-  ];
 
   return (
     <div className="space-y-24 max-w-7xl mx-auto px-4">
       {/* Hero + Featured Section */}
-      <Suspense fallback={<div>Loading Hero...</div>}>
-        <HeroFeaturedSection
-          featured={featuredStory}
-          trending={trendingStories}
+      <Suspense fallback={<div>Loading Breaking News...</div>}>
+        <HeroNewsSection
+          featured={breakingNews[0]}
+          trending={breakingNews.slice(1, 4)}
         />
       </Suspense>
 
