@@ -15,6 +15,7 @@ import Head from "next/head";
 import { LayoutWrapper } from "@/components/layout-wrapper";
 import React from "react";
 import { ScrollTop } from "primereact/scrolltop";
+import { Analytics } from "@vercel/analytics/next";
 
 // Metadata API for Next.js
 export const metadata = {
@@ -83,6 +84,7 @@ export default function RootLayout({ children }) {
             className="bg-blue-600 hover:bg-blue-700 shadow-lg rounded-full w-12 h-12 flex items-center justify-center transition-all duration-300"
             icon="pi pi-arrow-up text-white text-xl"
           />
+        <Analytics />
         </Providers>
       </body>
     </html>
