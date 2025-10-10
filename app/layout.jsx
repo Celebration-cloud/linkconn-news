@@ -1,5 +1,9 @@
 /* eslint-disable react/prop-types */
-import "@/styles/globals.css";
+import "primereact/resources/themes/lara-light-blue/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
+
+import "../styles/globals.css";
 import clsx from "clsx";
 
 import { Providers } from "./providers";
