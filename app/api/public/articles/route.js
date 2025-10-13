@@ -11,23 +11,27 @@ export async function GET(req) {
     const category = searchParams.get("category");
     const section = searchParams.get("section");
     const placement = searchParams.get("placement");
+    const search = searchParams.get("search"); // add search support
 
-    // Optional pagination
     const limitParam = searchParams.get("limit");
     const offsetParam = searchParams.get("offset");
-    const limit = limitParam ? parseInt(limitParam) : null; // null = no limit
+    const limit = limitParam ? parseInt(limitParam) : null;
     const offset = offsetParam ? parseInt(offsetParam) : 0;
 
     const filters = [Query.orderDesc("$createdAt")];
+
     if (category) filters.push(Query.equal("category", category));
     if (section) filters.push(Query.equal("newsSection", section));
     if (placement) filters.push(Query.equal("placement", placement));
 
+    // Add search by title if user types in search bar
+    if (search && search.trim() !== "") {
+      filters.push(Query.search("title", search.trim())); // "contains" search
+    }
+
     const articles = await databases.listDocuments(dbId, collectionId, filters);
     const total = articles.total;
 
-    // Apply pagination manually
-    // Wrap into object
     const paginatedArticles = {
       documents: limit
         ? articles.documents.slice(offset, offset + limit)

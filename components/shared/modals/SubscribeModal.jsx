@@ -2,7 +2,7 @@
 /* eslint-disable react/react-in-jsx-scope */
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Modal,
   ModalContent,
@@ -12,7 +12,9 @@ import {
   Button,
   Input,
 } from "@heroui/react";
+import { useForm } from "react-hook-form";
 import { Logo, MailIcon } from "@/components/icons";
+import { showToast } from "@/utils/toast";
 
 export const SubscribeModal = ({
   title = "Subscribe",
@@ -20,22 +22,68 @@ export const SubscribeModal = ({
   ...props
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [email, setEmail] = useState("");
 
-  const handleSubscribe = () => {
-    // TODO: handle subscribe logic (API call)
-    console.log("Subscribed with:", email);
-    setIsOpen(false);
+  // open automatically after 3s on first visit every 1 hour
+  useEffect(() => {
+    const lastShown = localStorage.getItem("subscribe-last-shown");
+    const now = Date.now();
+
+    if (!lastShown || now - parseInt(lastShown, 10) > 3600000) {
+      setTimeout(() => setIsOpen(true), 3000);
+      localStorage.setItem("subscribe-last-shown", now.toString());
+    }
+  }, []);
+
+  // React Hook Form setup
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm({
+    defaultValues: { email: "" },
+  });
+
+  const onSubmit = async (data) => {
+    try {
+      const res = await fetch("/api/public/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: data.email }),
+      });
+
+      const result = await res.json();
+
+      if (result.success) {
+        showToast({
+          color: "success",
+          description: "You're subscribed! Check your inbox for updates.",
+          title: "Success",
+        });
+        reset();
+        setIsOpen(false);
+      } else {
+        showToast({
+          color: "danger",
+          description:
+            "Subscription failed. Try again later: " +
+            (result.error || "Unknown error"),
+          title: "Error",
+        });
+      }
+    } catch (err) {
+      showToast({
+        color: "danger",
+        description: "Something went wrong. Please try again later: " + err.message,
+        title: "Error",
+      });
+    }
   };
 
   return (
     <>
-      {/* Trigger button */}
-      <Button
-        {...props}
-        className={className}
-        onPress={() => setIsOpen(true)}
-      >
+      {/* Manual trigger button */}
+      <Button {...props} className={className} onPress={() => setIsOpen(true)}>
         {title}
       </Button>
 
@@ -55,35 +103,50 @@ export const SubscribeModal = ({
                   Subscribe to Our Newsletter
                 </h2>
                 <p className="text-sm text-gray-500 text-center">
-                  Stay updated with the latest news, insights, and stories from
-                  Linkcon News.
+                  Get the latest news, insights, and stories from LinkOn News.
                 </p>
               </ModalHeader>
 
               <ModalBody>
-                <Input
-                  type="email"
-                  label="Email Address"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  fullWidth
-                  endContent={<MailIcon className="text-2xl" />}
-                  required
-                />
-              </ModalBody>
-
-              <ModalFooter>
-                <Button variant="light" onPress={onClose}>
-                  Cancel
-                </Button>
-                <Button
-                  className="bg-yellow-400 text-black font-semibold"
-                  onPress={handleSubscribe}
+                <form
+                  onSubmit={handleSubmit(onSubmit)}
+                  className="flex flex-col gap-4"
                 >
-                  Subscribe
-                </Button>
-              </ModalFooter>
+                  <Input
+                    type="email"
+                    label="Email Address"
+                    placeholder="Enter your email"
+                    {...register("email", {
+                      required: "Email is required",
+                      pattern: {
+                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                        message: "Invalid email address",
+                      },
+                    })}
+                    fullWidth
+                    endContent={<MailIcon className="text-2xl" />}
+                    isInvalid={!!errors.email}
+                    errorMessage={errors.email?.message}
+                  />
+
+                  <ModalFooter className="flex justify-end gap-2 mt-4">
+                    <Button
+                      variant="light"
+                      onPress={onClose}
+                      disabled={isSubmitting}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      className="bg-yellow-400 text-black font-semibold"
+                      isLoading={isSubmitting}
+                    >
+                      Subscribe
+                    </Button>
+                  </ModalFooter>
+                </form>
+              </ModalBody>
             </>
           )}
         </ModalContent>

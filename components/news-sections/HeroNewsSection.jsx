@@ -67,7 +67,7 @@ export default function HeroNewsSection({ featured, trending }) {
             </p>
             <Button
               as={NextLink}
-              href={`/article/breaking-news/${mainFeature.id}`}
+              href={`/article/breaking-news/${mainFeature.slug}`}
               size="md"
               className="mt-4 md:mt-6 bg-yellow-400 text-black font-semibold rounded-lg shadow-md hover:shadow-lg transition-all"
             >

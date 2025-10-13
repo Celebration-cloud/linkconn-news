@@ -20,6 +20,7 @@ import SocialIcons from "./icons/SocialIcons";
 import { useState } from "react";
 import { SubscribeModal } from "./shared/modals/SubscribeModal";
 import { usePathname } from "next/navigation";
+import SearchBar from "./SearchBar";
 
 /**
  * Full Navbar
@@ -53,16 +54,7 @@ export function Navbar() {
   };
 
   const searchBar = (
-    <Input
-      aria-label="Search news"
-      placeholder="Search Linkcon News..."
-      startContent={<SearchIcon className="text-default-400" />}
-      endContent={<Kbd className="hidden lg:inline-block" keys={["⌘", "K"]} />}
-      classNames={{
-        inputWrapper: "bg-default-100 w-full lg:w-[300px]",
-        input: "text-sm",
-      }}
-    />
+    <SearchBar />
   );
 
   return (
@@ -327,7 +319,7 @@ export function Navbar() {
           className="bg-gradient-to-r from-blue-600 to-blue-500 text-white"
         >
           <div className="w-full flex justify-center items-center">
-            <NavbarContent justify="center" className="max-sm:w-full">
+            <NavbarContent justify="center" className="w-2/3">
               {searchBar}
             </NavbarContent>
           </div>
