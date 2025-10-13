@@ -8,7 +8,8 @@ import { Image } from "@heroui/react";
 import NextLink from "next/link";
 import { motion } from "framer-motion";
 import SectionHeader from "./SectionHeader";
-import GradientChip from "../chip/GradientChip";
+import GradientChip from "../shared/chip/GradientChip";
+import IntroCard from "../shared/IntroCard/IntroCard";
 
 export default function WorldNewsSection({ articles = [] }) {
   const sectionColor = "green";
@@ -49,6 +50,18 @@ export default function WorldNewsSection({ articles = [] }) {
         color={sectionColor}
         link="/world-news"
         ctaLabel="More world news"
+      />
+
+      {/* Reusable Intro Card */}
+      <IntroCard
+        label="World News"
+        sectionColor={sectionColor}
+        title="Stay updated on major events across the globe"
+        description="From international politics to global developments, get the latest stories shaping the world."
+        gradientFrom="from-green-100"
+        gradientTo="to-green-200"
+        borderColor="border-green-300 dark:border-zinc-600"
+        textColor="black"
       />
 
       {/* Featured Articles - Two Side by Side */}

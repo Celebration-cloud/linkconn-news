@@ -10,7 +10,7 @@ import { Providers } from "./providers";
 
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
-import { CookieBanner } from "@/components/cookie-banner";
+import { CookieBanner } from "@/components/cookies/cookie-banner";
 import Head from "next/head";
 import { LayoutWrapper } from "@/components/layout-wrapper";
 import React from "react";

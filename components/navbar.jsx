@@ -1,5 +1,5 @@
 /* eslint-disable react/react-in-jsx-scope */
-"use client";;
+"use client";
 import {
   Navbar as HeroUINavbar,
   NavbarContent,
@@ -18,7 +18,7 @@ import { SearchIcon, Logo } from "@/components/icons";
 import { siteConfig } from "@/config/site";
 import SocialIcons from "./icons/SocialIcons";
 import { useState } from "react";
-import { SubscribeModal } from "./modals/SubscribeModal";
+import { SubscribeModal } from "./shared/modals/SubscribeModal";
 import { usePathname } from "next/navigation";
 
 /**

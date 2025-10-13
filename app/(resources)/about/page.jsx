@@ -1,7 +1,7 @@
 /* eslint-disable react/react-in-jsx-scope */
 "use client";
 
-import { SubscribeModal } from "@/components/modals/SubscribeModal";
+import { SubscribeModal } from "@/components/shared/modals/SubscribeModal";
 import { siteConfig } from "@/config/site";
 import { Card, CardBody, CardHeader, Divider, Image } from "@heroui/react";
 import { motion } from "framer-motion";
@@ -20,7 +20,6 @@ const staggerContainer = {
 };
 
 export default function AboutPage() {
-
   return (
     <div className="space-y-20 bg-gray-50 pb-24 dark:bg-gray-900 transition-colors duration-300">
       {/* Hero Section */}

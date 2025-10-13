@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/react-in-jsx-scope */
-import { AdSlot } from "@/components/advertisement/AdSlot";
+import { AdSlot } from "@/components/shared/advertisement/AdSlot";
 import { Card, CardBody } from "@heroui/react";
 import parse from "html-react-parser";
 

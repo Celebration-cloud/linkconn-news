@@ -9,7 +9,8 @@ import { Image } from "@heroui/react";
 import NextLink from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import SectionHeader from "./SectionHeader";
-import GradientChip from "../chip/GradientChip";
+import GradientChip from "../shared/chip/GradientChip";
+import IntroCard from "../shared/IntroCard/IntroCard";
 
 const fadeIn = {
   initial: { opacity: 0, y: 40 },
@@ -28,8 +29,7 @@ export default function TechnologySection({ articles = [] }) {
     id: a.$id,
     title: a.title,
     summary: a.summary || "Stay tuned for futuristic technology updates.",
-    image:
-      a.cover,
+    image: a.cover,
     slug: a.slug,
     date: new Date(a.$updatedAt || a.$createdAt).toLocaleDateString(),
   }));
@@ -70,6 +70,19 @@ export default function TechnologySection({ articles = [] }) {
         color={sectionColor}
         link="/technology"
         ctaLabel="Explore Tech"
+      />
+
+      {/* Reusable Intro Card */}
+      <IntroCard
+        label="Technology"
+        sectionColor={sectionColor}
+        title="Explore innovations shaping the future"
+        description="From AI breakthroughs to next-gen gadgets, we bring you updates on how technology is transforming the world."
+        fadeIn={fadeIn}
+        gradientFrom="from-red-100"
+        gradientTo="to-pink-100"
+        borderColor="border-red-300 dark:border-zinc-600"
+        textColor="black"
       />
 
       {/* Hero with animated transitions */}

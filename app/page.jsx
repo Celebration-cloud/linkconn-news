@@ -1,7 +1,7 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { lazy, Suspense } from "react";
-import { AdSlot } from "@/components/advertisement/AdSlot";
 import { getMainPageArticles } from "@/lib/actions/getMainPageArticles";
+import { AdSlot } from "@/components/shared/advertisement/AdSlot";
 
 // Lazy-load all sections except Hero
 const TopNewsSection = lazy(

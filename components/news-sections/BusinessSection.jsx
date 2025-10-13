@@ -6,8 +6,9 @@ import { Card, CardBody, CardHeader } from "@heroui/react";
 import SectionHeader from "./SectionHeader";
 import Image from "next/image";
 import NextLink from "next/link";
-import GradientChip from "../chip/GradientChip";
+import GradientChip from "../shared/chip/GradientChip";
 import { motion } from "framer-motion";
+import IntroCard from "../shared/IntroCard/IntroCard";
 
 export default function BusinessSection({ articles = [] }) {
   const sectionColor = "cyan";
@@ -55,6 +56,18 @@ export default function BusinessSection({ articles = [] }) {
         color={sectionColor}
         link="/business"
         ctaLabel="More Business News"
+      />
+
+      {/* Reusable Intro Card for Business */}
+      <IntroCard
+        label="Business"
+        sectionColor={sectionColor}
+        title="Stay ahead with the latest updates in business"
+        description="From market trends to financial insights, we bring you the stories driving global commerce."
+        gradientFrom="from-cyan-100"
+        gradientTo="to-cyan-200"
+        borderColor="border-cyan-300 dark:border-zinc-600"
+        textColor="black"
       />
 
       {/* Business Grid */}

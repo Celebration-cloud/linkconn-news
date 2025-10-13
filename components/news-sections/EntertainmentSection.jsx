@@ -8,7 +8,8 @@ import { Image } from "@heroui/react";
 import NextLink from "next/link";
 import { motion } from "framer-motion";
 import SectionHeader from "./SectionHeader";
-import GradientChip from "../chip/GradientChip";
+import GradientChip from "../shared/chip/GradientChip";
+import IntroCard from "../shared/IntroCard/IntroCard";
 
 export default function EntertainmentSection({ articles = [] }) {
   const sectionColor = "purple";
@@ -55,6 +56,18 @@ export default function EntertainmentSection({ articles = [] }) {
         color={sectionColor}
         link="/entertainment"
         ctaLabel="More entertainment"
+      />
+
+      {/* Reusable Intro Card */}
+      <IntroCard
+        label="Entertainment"
+        sectionColor={sectionColor}
+        title="Get the latest from movies, music, and celebrity buzz"
+        description="From blockbuster releases to viral moments, stay tuned for what’s trending in entertainment."
+        gradientFrom="from-purple-100"
+        gradientTo="to-purple-200"
+        borderColor="border-purple-300 dark:border-zinc-600"
+        textColor="black"
       />
 
       {/* Featured */}

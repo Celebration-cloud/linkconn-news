@@ -4,10 +4,11 @@
 
 import { Card, CardBody, Image } from "@heroui/react";
 import { motion } from "framer-motion";
-
 import NextLink from "next/link";
+
 import SectionHeader from "./SectionHeader";
-import GradientChip from "../chip/GradientChip";
+import GradientChip from "../shared/chip/GradientChip";
+import IntroCard from "../shared/IntroCard/IntroCard"; // ✅ import reusable component
 
 const fadeIn = {
   initial: { opacity: 0, y: 40, scale: 0.98 },
@@ -57,27 +58,20 @@ export default function PoliticsSection({ articles = [] }) {
         ctaLabel="More politics"
       />
 
-      {/* Intro Card with Fade */}
-      <motion.div {...fadeIn}>
-        <Card className="rounded-xl shadow-md bg-gradient-to-r from-yellow-100 to-yellow-200 dark:from-zinc-800 dark:to-zinc-700 border border-yellow-300 dark:border-zinc-600">
-          <CardBody className="p-6 text-center">
-            <GradientChip
-              label="Politics"
-              color={sectionColor}
-              textColor="black"
-            />
-            <h2 className="text-lg sm:text-xl md:text-2xl font-bold mt-3 dark:text-white">
-              Stay informed with the latest updates in politics
-            </h2>
-            <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 mt-2">
-              From elections to policy debates, we bring you the stories shaping
-              the future.
-            </p>
-          </CardBody>
-        </Card>
-      </motion.div>
+      {/* Reusable Intro Card */}
+      <IntroCard
+        label="Politics"
+        sectionColor={sectionColor}
+        title="Stay informed with the latest updates in politics"
+        description="From elections to policy debates, we bring you the stories shaping the future."
+        fadeIn={fadeIn}
+        gradientFrom="from-yellow-100"
+        gradientTo="to-yellow-200"
+        borderColor="border-yellow-300 dark:border-zinc-600"
+        textColor="black"
+      />
 
-      {/* Main Headline with Fade */}
+      {/* Main Headline */}
       <motion.div {...fadeIn}>
         <Card
           as={NextLink}
@@ -111,7 +105,7 @@ export default function PoliticsSection({ articles = [] }) {
         </Card>
       </motion.div>
 
-      {/* Two Medium Stories with Fade */}
+      {/* Two Medium Stories */}
       <div className="grid sm:grid-cols-2 gap-6">
         {[second, third].map((article) => (
           <motion.div {...fadeIn} key={article.id}>
@@ -147,7 +141,7 @@ export default function PoliticsSection({ articles = [] }) {
         ))}
       </div>
 
-      {/* Grid of Smaller Articles with Fade */}
+      {/* Grid of Smaller Articles */}
       <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
         {rest.map((item) => (
           <motion.div {...fadeIn} key={item.id}>

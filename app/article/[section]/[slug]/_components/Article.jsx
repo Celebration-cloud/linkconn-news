@@ -9,14 +9,13 @@ import ShareBar from "./ShareBar";
 import CommentSection from "@/components/dashboard/comments/CommentsSection";
 import { ArticleContent } from "./ArticleContent";
 import { useArticleMeta } from "@/context/ArticleMetaProvider";
-import { AdSlot } from "@/components/advertisement/AdSlot";
 import Link from "next/link";
-import { SubscribeModal } from "@/components/modals/SubscribeModal";
+import { SubscribeModal } from "@/components/shared/modals/SubscribeModal";
+import { AdSlot } from "@/components/shared/advertisement/AdSlot";
 
 export default function Article({ related = [] }) {
-  const { article, readingTime, articleRef } =
-    useArticleMeta();
-   console.log("Articleref:", articleRef.current)
+  const { article, readingTime, articleRef } = useArticleMeta();
+  console.log("Articleref:", articleRef.current);
   if (!article) return null;
 
   const jsonLd = {

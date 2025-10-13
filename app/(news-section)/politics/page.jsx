@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/react-in-jsx-scope */
-import SectionLayout from "@/components/news-layout/SectionLayout";
+import SectionLayout from "@/components/shared/news-layout/SectionLayout";
 import { getArticles } from "@/lib/actions/getArticles";
 
 // Demo data for fallback

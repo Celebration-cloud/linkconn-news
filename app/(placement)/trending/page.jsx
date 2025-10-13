@@ -1,6 +1,6 @@
 /* eslint-disable react/react-in-jsx-scope */
 "use client";
-import SectionLayout from "@/components/news-layout/SectionLayout";
+import SectionLayout from "@/components/shared/news-layout/SectionLayout";
 
 // Demo data
 const demoTrending = Array.from({ length: 48 }).map((_, i) => ({

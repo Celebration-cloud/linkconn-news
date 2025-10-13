@@ -8,7 +8,8 @@ import { Image } from "@heroui/react";
 import NextLink from "next/link";
 import SectionHeader from "./SectionHeader";
 import { motion } from "framer-motion";
-import GradientChip from "../chip/GradientChip";
+import GradientChip from "../shared/chip/GradientChip";
+import IntroCard from "../shared/IntroCard/IntroCard";
 
 export default function TopNewsSection({ articles = [] }) {
   const sectionColor = "blue";
@@ -52,6 +53,18 @@ export default function TopNewsSection({ articles = [] }) {
         color={sectionColor}
         link="/top-news"
         ctaLabel="See all top news"
+      />
+
+      {/* Reusable Intro Card */}
+      <IntroCard
+        label="Top News"
+        sectionColor={sectionColor}
+        title="Catch the latest headlines from across the world"
+        description="Stay up to date with trending stories, global reports, and key events shaping the news."
+        gradientFrom="from-blue-100"
+        gradientTo="to-blue-200"
+        borderColor="border-blue-300 dark:border-zinc-600"
+        textColor="black"
       />
 
       <div className="grid lg:grid-cols-3 gap-6">

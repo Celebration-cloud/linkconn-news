@@ -5,7 +5,7 @@ import React from "react";
 import { usePathname } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "./footer/Footer";
-import { AdSlot } from "./advertisement/AdSlot";
+import { AdSlot } from "./shared/advertisement/AdSlot";
 
 // Routes where Navbar (and ads) should be hidden
 const hiddenNavbarRoutes = [

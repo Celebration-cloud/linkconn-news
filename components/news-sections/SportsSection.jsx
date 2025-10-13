@@ -8,7 +8,8 @@ import { Image } from "@heroui/react";
 import NextLink from "next/link";
 import SectionHeader from "./SectionHeader";
 import { motion } from "framer-motion";
-import GradientChip from "../chip/GradientChip";
+import GradientChip from "../shared/chip/GradientChip";
+import IntroCard from "../shared/IntroCard/IntroCard";
 
 export default function SportsSection({ articles = [] }) {
   const sectionColor = "amber"; // Sports = amber
@@ -62,6 +63,19 @@ export default function SportsSection({ articles = [] }) {
         color={sectionColor}
         link="/sports"
         ctaLabel="More sports"
+      />
+      
+      {/* Reusable Intro Card for Sports */}
+      <IntroCard
+        label="Sports"
+        sectionColor={sectionColor}
+        title="Stay updated with the latest highlights in sports"
+        description="From match results to player milestones, we bring you the stories shaping every game."
+        fadeIn={fadeInUp}
+        gradientFrom="from-amber-100"
+        gradientTo="to-amber-200"
+        borderColor="border-amber-300 dark:border-zinc-600"
+        textColor="black"
       />
 
       {/* Hero Article */}
