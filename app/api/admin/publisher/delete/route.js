@@ -15,7 +15,7 @@ export async function DELETE(req) {
     }
 
     const dbId = process.env.NEXT_PUBLIC_APPWRITE_ADMIN_DB_ID;
-    const collectionId = "687a7fc200174c8e82a6"; // <-- Replace with your actual collection ID if different
+    const collectionId = process.env.NEXT_PUBLIC_APPWRITE_PUBLISHER_ID; // <-- Replace with your actual collection ID if different
 
     const existing = await databases.listDocuments(dbId, collectionId, [
       Query.equal("userId", userId),

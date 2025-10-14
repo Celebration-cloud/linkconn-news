@@ -14,7 +14,7 @@ import { SubscribeModal } from "@/components/shared/modals/SubscribeModal";
 import { AdSlot } from "@/components/shared/advertisement/AdSlot";
 
 export default function Article({ related = [] }) {
-  const { article, readingTime, articleRef } = useArticleMeta();
+  const { article, readingTime, articleRef, user } = useArticleMeta();
   console.log("Articleref:", articleRef.current);
   if (!article) return null;
 
@@ -113,7 +113,7 @@ export default function Article({ related = [] }) {
       {/* 🔥 Inline Ad between sections */}
       <AdSlot type="inline" />
 
-      <ArticleContent article={article} insertAds={[0, 2, 10]} />
+      <ArticleContent article={article} insertAds={[0, 2, 10]} related={related} />
 
       {/* 🔥 Wide Leaderboard Ad */}
       <AdSlot type="leaderboard" />
@@ -196,7 +196,7 @@ export default function Article({ related = [] }) {
           <i className="pi pi-comments text-blue-600 dark:text-blue-400" />{" "}
           Comments {`(${article.comments || 0})`}
         </h2>
-        <CommentSection articleId={article.$id} />
+        <CommentSection articleId={article.$id} user={user} />
         {/* <Comments articleId={article.id} /> */}
       </section>
     </article>

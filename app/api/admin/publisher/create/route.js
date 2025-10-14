@@ -2,7 +2,7 @@
 import { databases } from "@/lib/appwrite";
 import { getAuth } from "@clerk/nextjs/server";
 
-const collectionId = "687a7fc200174c8e82a6";
+const collectionId = process.env.NEXT_PUBLIC_APPWRITE_PUBLISHER_ID;
 const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_ADMIN_DB_ID;
 
 

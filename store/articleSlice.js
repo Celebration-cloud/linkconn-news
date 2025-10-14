@@ -144,10 +144,10 @@ export const articleSlice = createSlice({
         if (index !== -1) {
           state.articles[index] = action.payload.data;
         }
-        showToast({
-          title: "Article updated",
-          color: "success",
-        });
+        // showToast({
+        //   title: "Article updated",
+        //   color: "success",
+        // });
       })
       .addCase(updateArticleThunk.rejected, (state, action) => {
         state.error = action.error.message;

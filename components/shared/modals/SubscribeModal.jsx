@@ -23,14 +23,19 @@ export const SubscribeModal = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Auto-open after delay if user hasn't subscribed before
-  useEffect(() => {
-    const subscribed = localStorage.getItem("subscribed");
-    if (!subscribed) {
-      const timer = setTimeout(() => setIsOpen(true), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, []);
+useEffect(() => {
+  const subscribed = localStorage.getItem("subscribed");
+  const lastShown = localStorage.getItem("subscribe-last-shown");
+  const now = Date.now();
+
+  // Only open if not subscribed and 1 hour has passed since last show
+  if (!subscribed && (!lastShown || now - parseInt(lastShown, 10) > 3600000)) {
+    const timer = setTimeout(() => setIsOpen(true), 3000);
+    localStorage.setItem("subscribe-last-shown", now.toString());
+    return () => clearTimeout(timer);
+  }
+}, []);
+
 
   // React Hook Form setup
   const {

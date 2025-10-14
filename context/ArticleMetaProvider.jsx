@@ -2,6 +2,7 @@
 /* eslint-disable react/react-in-jsx-scope */
 "use client";
 
+import { useReadingTracker } from "@/hooks/useReadingTracker";
 import {
   fetchArticleByIdThunk,
   updateArticleThunk,
@@ -18,7 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 const ArticleMetaContext = createContext(null);
 
-export function ArticleMetaProvider({ article, slug, content, children }) {
+export function ArticleMetaProvider({ article, slug, content, children, user }) {
   const dispatch = useDispatch();
   const articleRef = useRef(null);
 
@@ -26,6 +27,8 @@ export function ArticleMetaProvider({ article, slug, content, children }) {
   const [impression, setImpression] = useState(article.impressions || 0);
   const [shares, setShares] = useState(article.shares || 0);
   const [readingTime, setReadingTime] = useState(null);
+  useReadingTracker(article, user.id || "guest");
+
 
   const {
     items: comments,
@@ -124,6 +127,7 @@ export function ArticleMetaProvider({ article, slug, content, children }) {
         comments,
         totalComments,
         loading,
+        user,
         dispatch,
         recordShare,
         articleRef,

@@ -4,7 +4,7 @@ import { ID, Query } from "appwrite";
 import { databases } from "@/lib/appwrite";
 
 const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_ADMIN_DB_ID;
-const COLLECTION_ID = "68dfd833002f34f00628";
+const COLLECTION_ID = process.env.NEXT_PUBLIC_APPWRITE_ARTICLE_COMMENTS_ID;
 
 function buildTree(comments, parentId = null) {
   return comments

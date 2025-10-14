@@ -17,7 +17,7 @@ export async function GET(req) {
     }
 
     // Use the correct collection ID from your Appwrite dashboard
-    const collectionId = "687a7fc200174c8e82a6"; // <-- Replace with your actual collection ID if different
+    const collectionId = process.env.NEXT_PUBLIC_APPWRITE_PUBLISHER_ID; // <-- Replace with your actual collection ID if different
 
     // Use Appwrite's Query helper for correct query syntax
     const existing = await databases.listDocuments(

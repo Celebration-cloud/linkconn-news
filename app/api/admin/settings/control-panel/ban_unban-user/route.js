@@ -13,7 +13,7 @@ const clerkBackend = createClerkClient({
 });
 
 const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_ADMIN_DB_ID;
-const INVITES_COLLECTION_ID = "68a7f81700394fd0385f";
+const INVITES_COLLECTION_ID = process.env.NEXT_PUBLIC_APPWRITE_INVITATION_ID;
 
 // 🔒 Ban / Unban user
 export async function PUT(req) {

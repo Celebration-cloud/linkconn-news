@@ -16,7 +16,7 @@ export async function PUT(req) {
 
     const { published, liked, followers, following } = await req.json();
     console.log(published)
-    const collectionId = "687a7fc200174c8e82a6"; // your actual collection ID
+     process.env.NEXT_PUBLIC_APPWRITE_PUBLISHER_ID; // your actual collection ID
 
     const existing = await databases.listDocuments(
       process.env.NEXT_PUBLIC_APPWRITE_ADMIN_DB_ID,
