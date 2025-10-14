@@ -23,14 +23,12 @@ export const SubscribeModal = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  // open automatically after 3s on first visit every 1 hour
+  // Auto-open after delay if user hasn't subscribed before
   useEffect(() => {
-    const lastShown = localStorage.getItem("subscribe-last-shown");
-    const now = Date.now();
-
-    if (!lastShown || now - parseInt(lastShown, 10) > 3600000) {
-      setTimeout(() => setIsOpen(true), 3000);
-      localStorage.setItem("subscribe-last-shown", now.toString());
+    const subscribed = localStorage.getItem("subscribed");
+    if (!subscribed) {
+      const timer = setTimeout(() => setIsOpen(true), 3000);
+      return () => clearTimeout(timer);
     }
   }, []);
 
@@ -74,7 +72,8 @@ export const SubscribeModal = ({
     } catch (err) {
       showToast({
         color: "danger",
-        description: "Something went wrong. Please try again later: " + err.message,
+        description:
+          "Something went wrong. Please try again later: " + err.message,
         title: "Error",
       });
     }
