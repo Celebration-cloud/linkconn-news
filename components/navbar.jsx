@@ -10,8 +10,6 @@ import {
   NavbarMenuItem,
 } from "@heroui/react";
 import { Button } from "@heroui/react";
-import { Input } from "@heroui/react";
-import { Kbd } from "@heroui/react";
 import NextLink from "next/link";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { SearchIcon, Logo } from "@/components/icons";
