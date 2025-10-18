@@ -4,6 +4,7 @@ import articleReducer from "./articleSlice";
 import controlPanelReducer from "./controlPanelSlice";
 import deviceReducer from "./deviceSlice";
 import commentsReducer from "./commentsSlice";
+import authReducer from "./authSlice";
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     controlPanel: controlPanelReducer,
     comments: commentsReducer,
     devices: deviceReducer,
+    auth: authReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

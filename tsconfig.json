@@ -30,6 +30,8 @@
     "**/*.tsx",
     "**/*.js",
     "**/*.jsx",
-    ".next/types/**/*.ts", "postcss.config.js"  ],
+    ".next/types/**/*.ts",
+    "postcss.config.js"
+  ],
   "exclude": ["node_modules"]
 }

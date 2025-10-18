@@ -1,38 +1,62 @@
-// context/AuthUIContext.jsx
+/* eslint-disable react/prop-types */
+/* eslint-disable react/react-in-jsx-scope */
 "use client";
 
-import { createContext, useContext, useState } from "react";
-import { useDisclosure } from "@heroui/react";
-import { useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
-import { useLayoutEffect } from "react";
-const AuthUIContext = createContext();
+import { fetchCurrentUser, logoutUser } from "@/store/authSlice";
+import { createContext, useContext, useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-export const AuthUIProvider = ({ children }) => {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+const AuthUIContext = createContext(null);
+
+export function AuthUIProvider({ children }) {
+  const [isOpen, setIsOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState("login");
-  const router = useRouter();
-  const { isLoaded, isSignedIn } = useUser();
 
-  useLayoutEffect(() => {
-    if (!isLoaded) return;
+  const { user, profile, loading } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
-    if (isSignedIn) {
-      router.replace("/admin/dashboard");
-    } else {
-      router.replace("/admin/login");
+  const onOpen = () => setIsOpen(true);
+  const onClose = () => setIsOpen(false);
+  const onOpenChange = (val) => setIsOpen(val);
+  const switchTo = (tab) => {
+    setSelectedTab(tab);
+    setIsOpen(true);
+  };
+
+  useEffect(() => {
+    dispatch(fetchCurrentUser());
+  }, [dispatch]);
+
+  const logout = async () => {
+    try {
+      dispatch(logoutUser());
+    } catch (err) {
+      console.error("Logout error:", err);
     }
-  }, [isSignedIn, isLoaded, router]);
-
-  const switchTo = (tabKey) => setSelectedTab(tabKey);
+  };
 
   return (
     <AuthUIContext.Provider
-      value={{ isOpen, onOpen, onOpenChange, selectedTab, switchTo }}
+      value={{
+        isOpen,
+        onOpen,
+        onClose,
+        onOpenChange,
+        selectedTab,
+        switchTo,
+        user,
+        loading,
+        profile,
+        logout,
+      }}
     >
       {children}
     </AuthUIContext.Provider>
   );
-};
+}
 
-export const useAuthUI = () => useContext(AuthUIContext);
+export function useAuthUI() {
+  const ctx = useContext(AuthUIContext);
+  if (!ctx) throw new Error("useAuthUI must be used inside AuthUIProvider");
+  return ctx;
+}

@@ -19,6 +19,7 @@ import { useState } from "react";
 import { SubscribeModal } from "./shared/modals/SubscribeModal";
 import { usePathname } from "next/navigation";
 import SearchBar from "./SearchBar";
+import UnifiedAuthModal from "./dashboard/UnifiedAuthModal";
 
 /**
  * Full Navbar
@@ -96,7 +97,7 @@ export function Navbar() {
         maxWidth="2xl"
         isMenuOpen={isMenuOpen}
         onMenuOpenChange={setIsMenuOpen}
-        className="bg-gradient-to-r from-blue-600 to-blue-500 text-white md:h-44 max-md:py-3"
+        className="bg-gradient-to-r from-blue-600 to-blue-500 text-white  w-full overflow-x-auto scrollbar-hide md:h-44 max-md:py-3"
       >
         <NavbarContent justify="start" className="hidden sm:flex">
           <SocialIcons size="text-2xl" />
@@ -130,15 +131,7 @@ export function Navbar() {
 
           <ThemeSwitch />
           <SubscribeModal />
-
-          <Button
-            as={NextLink}
-            href="/auth/login"
-            variant="bordered"
-            className="border-white text-inherit"
-          >
-            Login
-          </Button>
+          <UnifiedAuthModal />
         </NavbarContent>
 
         {/* Mobile actions */}
@@ -269,14 +262,7 @@ export function Navbar() {
 
             {/* Action buttons */}
             <div className="flex flex-col gap-3">
-              <Button
-                as={NextLink}
-                href="/auth/login"
-                variant="bordered"
-                className="border-white text-inherit"
-              >
-                Login
-              </Button>
+              <UnifiedAuthModal />
               <SubscribeModal />
             </div>
           </div>

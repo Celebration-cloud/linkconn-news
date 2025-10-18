@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "./footer/Footer";
 import { AdSlot } from "./shared/advertisement/AdSlot";
+import { AuthUIProvider } from "@/context/AuthUIContext";
 
 // Routes where Navbar (and ads) should be hidden
 const hiddenNavbarRoutes = [
@@ -30,41 +31,43 @@ export const LayoutWrapper = ({ children }) => {
   const hideNavbar = hiddenNavbarRoutes.includes(pathname);
 
   return (
-    <div className="relative flex flex-col min-h-screen">
-      {/* Navbar */}
-      {!hideNavbar && <Navbar />}
+    <AuthUIProvider>
+      <div className="relative flex flex-col min-h-screen">
+        {/* Navbar */}
+        {!hideNavbar && <Navbar />}
 
-      {/* Top Ad Banner */}
-      {!hideNavbar && (
-        <div className="border-b">
-          <AdSlot type="hero" />
-        </div>
-      )}
+        {/* Top Ad Banner */}
+        {!hideNavbar && (
+          <div className="border-b">
+            <AdSlot type="hero" />
+          </div>
+        )}
 
-      {/* Main Content with Side Ad */}
-      <main className="container mx-auto max-w-7xl px-0 flex-grow">
-        {/* Main Section */}
-        <div className="flex-1">
-          {children}
+        {/* Main Content with Side Ad */}
+        <main className="container mx-auto max-w-7xl px-0 flex-grow">
+          {/* Main Section */}
+          <div className="flex-1">
+            {children}
 
-          {/* Inline Ad inside content */}
-          {!hideNavbar && (
-            <div className="my-10">
-              <AdSlot type="inline" />
-            </div>
-          )}
-        </div>
-      </main>
+            {/* Inline Ad inside content */}
+            {!hideNavbar && (
+              <div className="my-10">
+                <AdSlot type="inline" />
+              </div>
+            )}
+          </div>
+        </main>
 
-      {/* Bottom Ad Banner */}
-      {!hideNavbar && (
-        <div className="border-t">
-          <AdSlot type="hero" />
-        </div>
-      )}
+        {/* Bottom Ad Banner */}
+        {!hideNavbar && (
+          <div className="border-t">
+            <AdSlot type="hero" />
+          </div>
+        )}
 
-      {/* Footer */}
-      {!hideNavbar && <Footer />}
-    </div>
+        {/* Footer */}
+        {!hideNavbar && <Footer />}
+      </div>
+    </AuthUIProvider>
   );
 };
