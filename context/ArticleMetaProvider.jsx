@@ -22,6 +22,18 @@ const ArticleMetaContext = createContext(null);
 export function ArticleMetaProvider({ article, slug, content, children, user }) {
   const dispatch = useDispatch();
   const articleRef = useRef(null);
+    const { profile } = useSelector((state) => state.auth);
+      if (profile && profile.userId) {
+        user.id = profile.userId;
+        user.name = profile.name;
+        user.avatar = profile.cover;
+      }
+    console.log(
+      "User profile in ArticleMetaProvider:",
+      profile,
+      "Demo profile in ArticleMetaProvider:",
+      user
+    );
 
   const [visits, setVisits] = useState(article.clicks || 0);
   const [impression, setImpression] = useState(article.impressions || 0);

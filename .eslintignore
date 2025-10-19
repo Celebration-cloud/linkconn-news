@@ -9,6 +9,7 @@ scripts/*
 *.config.js
 .DS_Store
 node_modules
+.history/
 coverage
 .next
 build

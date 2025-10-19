@@ -36,7 +36,7 @@ export default function LoginModal() {
     try {
       onOpenChange(false);
 
-      const res = await dispatch(loginUser(data));
+      const res = dispatch(loginUser(data));
 
       if (res.meta.requestStatus === "fulfilled") {
         showToast({

@@ -8,6 +8,7 @@ export function ArticleContent({
   article,
   insertAds = [2, 10],
   insertReadAlso = 15,
+  related = [],
 }) {
   // Split paragraphs
   const paragraphs = article.content.split(/<\/p>/i);
@@ -31,18 +32,22 @@ export function ArticleContent({
                 </div>
               )}
 
-              {/* Inject READ ALSO dynamically */}
-              {index === insertReadAlso && (
-                <div className="my-10 px-6 py-8 bg-blue-50 dark:bg-blue-900/40 rounded-xl border-l-4 border-blue-600 dark:border-blue-400">
-                  <a
-                    href="/article/security-operatives-dislodge-ipob-commanders"
-                    className="block text-2xl font-bold text-blue-700 dark:text-blue-400 leading-snug hover:underline"
-                  >
-                    READ ALSO: Security operatives dislodge ‘notorious IPOB
-                    commanders’ from hideouts
-                  </a>
-                </div>
-              )}
+              {/* Inject READ ALSO dynamically or fallback to AdSlot */}
+              {index === insertReadAlso &&
+                (related?.length > 0 ? (
+                  <div className="my-10 px-6 py-8 bg-blue-50 dark:bg-blue-900/40 rounded-xl border-l-4 border-blue-600 dark:border-blue-400">
+                    <a
+                      href={`/article/${related[0].newsSection}/${related[0].slug}`}
+                      className="block text-2xl font-bold text-blue-700 dark:text-blue-400 leading-snug hover:underline"
+                    >
+                      READ ALSO: {related[0].title}
+                    </a>
+                  </div>
+                ) : (
+                  <div className="my-8">
+                    <AdSlot type="inline" />
+                  </div>
+                ))}
             </div>
           ))}
         </CardBody>

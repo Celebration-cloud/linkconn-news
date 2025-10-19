@@ -12,6 +12,7 @@ import { useArticleMeta } from "@/context/ArticleMetaProvider";
 import Link from "next/link";
 import { SubscribeModal } from "@/components/shared/modals/SubscribeModal";
 import { AdSlot } from "@/components/shared/advertisement/AdSlot";
+import { siteConfig } from "@/config/site";
 
 export default function Article({ related = [] }) {
   const { article, readingTime, articleRef, user } = useArticleMeta();
@@ -31,7 +32,7 @@ export default function Article({ related = [] }) {
       name: "Linkcon News",
       logo: {
         "@type": "ImageObject",
-        url: "https://www.linkconnews.com/logo.png",
+        url: siteConfig.logo,
       },
     },
     description: article.summary,
@@ -40,7 +41,7 @@ export default function Article({ related = [] }) {
   return (
     <article
       ref={articleRef}
-      className="max-w-5xl mx-auto px-6 py-10 space-y-10 text-gray-800 dark:text-gray-200"
+      className="max-w-5xl mx-auto px-2 py-10 space-y-10 text-gray-800 dark:text-gray-200"
     >
       {/* JSON-LD for SEO */}
       <script
@@ -63,48 +64,55 @@ export default function Article({ related = [] }) {
       {/* 🔥 Ad Slot after Hero */}
       <AdSlot type="hero" />
 
-      {/* Title + Meta */}
-      <header className="space-y-4 text-center">
-        <Chip color="primary" variant="flat" className="mx-auto">
-          {article.newsSection}
-        </Chip>
-        <h1 className="text-4xl md:text-5xl font-extrabold text-blue-700 dark:text-blue-400">
+      <header className="text-center px-4 md:px-8 lg:px-16 py-6 space-y-4 border-b border-gray-200 dark:border-gray-800">
+        {/* Section chip */}
+        <div className="flex justify-center">
+          <Chip color="primary" variant="flat" className="text-sm md:text-base">
+            {article.newsSection}
+          </Chip>
+        </div>
+
+        {/* Title */}
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight text-blue-700 dark:text-blue-400">
           {article.title}
         </h1>
-        <p className="text-gray-500 dark:text-gray-400 flex items-center justify-center gap-4">
-          <span>
-            <i className="pi pi-user text-blue-500 dark:text-blue-400 mr-1" />{" "}
-            {article.authorName}{" "}
-            <span className="text-gray-400 dark:text-gray-500">
+
+        {/* Author + Meta */}
+        <div className="flex flex-wrap items-center justify-center gap-3 text-gray-600 dark:text-gray-400 text-sm md:text-base">
+          <span className="flex items-center gap-1">
+            <i className="pi pi-user text-blue-500 dark:text-blue-400" />
+            {article.authorName}
+            <span className="text-gray-400 dark:text-gray-500 text-xs md:text-sm">
               ({article.authorRole})
             </span>
           </span>
-          <span>
-            <i className="pi pi-calendar text-blue-500 dark:text-blue-400 mr-1" />{" "}
+
+          <span className="flex items-center gap-1">
+            <i className="pi pi-calendar text-blue-500 dark:text-blue-400" />
             {new Date(article.$createdAt).toLocaleDateString()}
           </span>
-          <span className="hidden md:inline">
-            <i className="pi pi-eye text-blue-500 dark:text-blue-400 mr-1" />{" "}
-            {article.impressions} views
-          </span>
-          <span className="hidden md:inline">
-            <i className="pi pi-stopwatch text-blue-500 dark:text-blue-400 mr-1" />{" "}
-            {readingTime}
-            {readingTime > 1 ? " mins " : " min "} read
-          </span>
-        </p>
+
+          {readingTime && (
+            <span className="hidden sm:flex items-center gap-1">
+              <i className="pi pi-stopwatch text-blue-500 dark:text-blue-400" />
+              {readingTime} {readingTime > 1 ? "mins" : "min"} read
+            </span>
+          )}
+        </div>
 
         {/* Tags */}
-        <div className="flex flex-wrap items-center gap-2 justify-center">
-          {article.tags?.map((t) => (
-            <span
-              key={t}
-              className="px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 text-xs font-medium"
-            >
-              #{t}
-            </span>
-          ))}
-        </div>
+        {article.tags?.length > 0 && (
+          <div className="flex flex-wrap justify-center gap-2 mt-4">
+            {article.tags.map((t) => (
+              <span
+                key={t}
+                className="px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 text-xs font-medium hover:bg-blue-100 dark:hover:bg-blue-800/50 transition"
+              >
+                #{t}
+              </span>
+            ))}
+          </div>
+        )}
       </header>
 
       {/* Share Bar */}
@@ -113,7 +121,11 @@ export default function Article({ related = [] }) {
       {/* 🔥 Inline Ad between sections */}
       <AdSlot type="inline" />
 
-      <ArticleContent article={article} insertAds={[0, 2, 10]} related={related} />
+      <ArticleContent
+        article={article}
+        insertAds={[0, 2, 10]}
+        related={related}
+      />
 
       {/* 🔥 Wide Leaderboard Ad */}
       <AdSlot type="leaderboard" />
@@ -139,8 +151,8 @@ export default function Article({ related = [] }) {
           </span>
         </div>
         <SubscribeModal
-          className="rounded-full px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-md transition-all duration-200"
-          color="primary"
+          className="w-full sm:w-auto rounded-full px-6 sm:px-8 py-3 bg-amber-400 hover:bg-amber-500 text-black font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all duration-200 text-sm sm:text-base md:text-lg"
+          color="warning"
           size="lg"
           title="Subscribe for Updates"
         />
