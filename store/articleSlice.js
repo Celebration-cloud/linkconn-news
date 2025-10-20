@@ -24,6 +24,22 @@ export const fetchArticlesThunk = createAsyncThunk(
   }
 );
 
+export const fetchArticleStats = createAsyncThunk(
+  "articles/fetchArticleStats",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await fetch("/api/admin/article/summary");
+      const data = await res.json();
+      return data; // Keep full nested structure (totals, metrics, insights)
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+
+
+
 // Create a new article
 export const createArticleThunk = createAsyncThunk(
   "article/create",
@@ -67,6 +83,7 @@ export const articleSlice = createSlice({
     totalRecords: 0,
     loading: false,
     error: null,
+    stats: {}, 
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -85,6 +102,19 @@ export const articleSlice = createSlice({
       .addCase(fetchArticlesThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+      })
+
+      // FETCH ARTICLE STATS
+      .addCase(fetchArticleStats.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchArticleStats.fulfilled, (state, action) => {
+        state.loading = false;
+        state.stats = action.payload; // already flattened
+      })
+      .addCase(fetchArticleStats.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       })
 
       // CREATE ARTICLE

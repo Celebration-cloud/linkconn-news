@@ -1,34 +1,39 @@
 /* eslint-disable react/prop-types */
 "use client";
 import React from "react";
-import { Button } from "primereact/button";
+import { Button } from "@heroui/react";
 
-/**
- * Left toolbar with New + Delete Selected buttons.
- */
-export default function LeftToolbar({ router, confirmDeleteSelected, selectedArticles }) {
+export default function LeftToolbar({
+  router,
+  confirmDeleteSelected,
+  selectedArticles,
+}) {
+  const isDisabled = !selectedArticles || selectedArticles.length === 0;
+
   return (
-    <div className="flex flex-wrap gap-3">
-         {/* New Article Button */}
-         <Button
-           label="New Article"
-           icon="pi pi-plus"
-           className="!rounded-lg !px-4 !py-2 font-medium bg-green-600 hover:bg-green-700 text-white text-sm border-0 shadow-sm transition-colors"
-           onClick={() => router.push("/admin/publish")}
-         />
-   
-         {/* Delete Button */}
-         <Button
-           label="Delete Selected"
-           icon="pi pi-trash"
-           className={`!rounded-lg !px-4 !py-2 font-medium text-sm border-0 shadow-sm transition-colors ${
-             !selectedArticles || !selectedArticles.length
-               ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-               : "bg-red-600 hover:bg-red-700 text-white"
-           }`}
-           onClick={confirmDeleteSelected}
-           disabled={!selectedArticles || !selectedArticles.length}
-         />
-       </div>
+    <div className="flex flex-wrap gap-3 items-center">
+      {/* New Article Button */}
+      <Button
+        color="success"
+        variant="solid"
+        endContent={<i className="pi pi-plus" />}
+        className="px-5 py-2 text-sm font-medium rounded-md"
+        onPress={() => router.push("/admin/publish")}
+      >
+        New Article
+      </Button>
+
+      {/* Delete Selected Button */}
+      <Button
+        color="danger"
+        variant={isDisabled ? "flat" : "solid"}
+        endContent={<i className="pi pi-trash" />}
+        className="px-5 py-2 text-sm font-medium rounded-md"
+        isDisabled={isDisabled}
+        onPress={confirmDeleteSelected}
+      >
+        Delete Selected
+      </Button>
+    </div>
   );
 }
