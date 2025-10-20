@@ -1,20 +1,12 @@
 /* eslint-disable no-undef */
 import { databases } from "@/lib/appwrite";
 import { Query } from "appwrite";
+import { NextResponse } from "next/server";
 
 // Database and Collection IDs from environment variables
 const DATABASE_ID = process.env.NEXT_PUBLIC_APPWRITE_ADMIN_DB_ID;
 const COLLECTION_ID = process.env.NEXT_PUBLIC_APPWRITE_ARTICLE_SAVES_ID;
 
-/**
- * @route GET /api/admin/articles/summary
- * @description
- * Fetch comprehensive analytics summary for all articles in Appwrite.
- * Returns global metrics, performance stats, author/category/device insights,
- * and time-based trends for dashboards.
- *
- * @returns {object} JSON summary of article analytics
- */
 export async function GET() {
   try {
     // 1. Fetch all articles (limit 1000 to prevent overload)
@@ -138,7 +130,7 @@ export async function GET() {
       }));
 
     // 10. Structured response
-    return Response.json({
+    return NextResponse.json({
       totals: {
         total,
         published,
