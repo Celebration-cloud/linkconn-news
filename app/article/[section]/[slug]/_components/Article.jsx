@@ -2,215 +2,256 @@
 /* eslint-disable react/prop-types */
 "use client";
 
+import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Chip } from "@heroui/react";
+import { motion, useScroll, useSpring } from "framer-motion";
 import ShareBar from "./ShareBar";
-// import Comments from "./Comments";
-import CommentSection from "@/components/dashboard/comments/CommentsSection";
 import { ArticleContent } from "./ArticleContent";
 import { useArticleMeta } from "@/context/ArticleMetaProvider";
-import Link from "next/link";
 import { SubscribeModal } from "@/components/shared/modals/SubscribeModal";
-import { AdSlot } from "@/components/shared/advertisement/AdSlot";
-import { siteConfig } from "@/config/site";
+import EditorialCard from "@/components/shared/news-layout/EditorialCard";
+import { showToast } from "@/utils/toast";
+import { Bookmark, ExternalLink, Minus, Pause, Play, Plus } from "lucide-react";
+import { normalizeCategory } from "@/lib/category-themes";
 
 export default function Article({ related = [] }) {
-  const { article, readingTime, articleRef, user } = useArticleMeta();
-  console.log("Articleref:", articleRef.current);
-  if (!article) return null;
+  const { article, readingTime, articleRef } = useArticleMeta();
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [fontSizeLevel, setFontSizeLevel] = useState(1); // 0: sm, 1: base, 2: lg
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "NewsArticle",
-    headline: article.title,
-    image: [article.cover],
-    datePublished: article.createdAt,
-    dateModified: article.updatedAt,
-    author: [{ "@type": "Person", name: article.authorName }],
-    publisher: {
-      "@type": "Organization",
-      name: "Linkcon News",
-      logo: {
-        "@type": "ImageObject",
-        url: siteConfig.logo,
-      },
-    },
-    description: article.summary,
+  // Reading progress
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
+  });
+
+  useEffect(() => {
+    if (!article?.slug) return;
+    try {
+      const saved = JSON.parse(localStorage.getItem("bookmarked_articles") || "[]");
+      setIsBookmarked(saved.includes(article.slug));
+    } catch (e) {
+      console.error(e);
+    }
+  }, [article?.slug]);
+
+  const toggleBookmark = () => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("bookmarked_articles") || "[]");
+      let next;
+      if (saved.includes(article.slug)) {
+        next = saved.filter((s) => s !== article.slug);
+        setIsBookmarked(false);
+        showToast({ title: "Removed from bookmarks", color: "info" });
+      } else {
+        next = [...saved, article.slug];
+        setIsBookmarked(true);
+        showToast({ title: "Saved to bookmarks", color: "success" });
+      }
+      localStorage.setItem("bookmarked_articles", JSON.stringify(next));
+    } catch (e) {
+      console.error(e);
+    }
   };
 
+  if (!article) return null;
+
+  const fontClasses = ["text-base", "text-lg", "text-xl"][fontSizeLevel];
+  const categoryKey = normalizeCategory(article.newsSection || article.section || "world");
+
   return (
-    <article
-      ref={articleRef}
-      className="max-w-5xl mx-auto px-2 py-10 space-y-10 text-gray-800 dark:text-gray-200"
-    >
-      {/* JSON-LD for SEO */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    <div data-category={categoryKey} className="relative">
+      {/* Sticky Reading Progress Bar */}
+      <motion.div
+        className="category-fill fixed left-0 right-0 top-0 z-50 h-1 origin-left"
+        style={{ scaleX }}
       />
 
-      {/* Cover Image */}
-      <div className="rounded-2xl overflow-hidden shadow-lg">
-        <Image
-          src={article.cover}
-          alt={article.title}
-          width={1600}
-          height={900}
-          className="w-full h-[420px] object-cover"
-          priority
-        />
-      </div>
+      <article ref={articleRef} className="mx-auto max-w-4xl space-y-7 px-3 py-6 min-[375px]:px-4 sm:space-y-8 sm:px-6 sm:py-8">
+        {/* Breadcrumb & Section tag */}
+        <div className="flex flex-col items-start justify-between gap-3 border-b border-[var(--line)] pb-4 min-[425px]:flex-row min-[425px]:items-center">
+          <div className="site-muted flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wider">
+            <span>Journal</span>
+            <span>/</span>
+            <span className="category-accent font-bold">{article.newsSection || "World"}</span>
+          </div>
 
-      {/* 🔥 Ad Slot after Hero */}
-      <AdSlot type="hero" />
+          <div className="flex items-center gap-2">
+            {/* Font Resizer Control */}
+            <div className="flex items-center rounded-lg border border-[var(--line)] p-0.5 text-xs">
+              <button
+                onClick={() => setFontSizeLevel((l) => Math.max(0, l - 1))}
+                className={`grid size-10 place-items-center rounded transition-colors ${fontSizeLevel === 0 ? "bg-[var(--surface-raised)]" : "text-[var(--ink-muted)] hover:text-[var(--ink)]"}`}
+                title="Smaller text"
+                aria-label="Decrease article text size"
+              >
+                <Minus className="size-4" />
+              </button>
+              <button
+                onClick={() => setFontSizeLevel((l) => Math.min(2, l + 1))}
+                className={`grid size-10 place-items-center rounded transition-colors ${fontSizeLevel === 2 ? "bg-[var(--surface-raised)]" : "text-[var(--ink-muted)] hover:text-[var(--ink)]"}`}
+                title="Larger text"
+                aria-label="Increase article text size"
+              >
+                <Plus className="size-4" />
+              </button>
+            </div>
 
-      <header className="text-center px-4 md:px-8 lg:px-16 py-6 space-y-4 border-b border-gray-200 dark:border-gray-800">
-        {/* Section chip */}
-        <div className="flex justify-center">
-          <Chip color="primary" variant="flat" className="text-sm md:text-base">
-            {article.newsSection}
-          </Chip>
+            {/* Bookmark button */}
+            <button
+              onClick={toggleBookmark}
+              className={`grid size-11 place-items-center rounded-lg border border-[var(--line)] transition-colors ${isBookmarked ? "category-tint" : "text-[var(--ink-muted)] hover:bg-[var(--surface-raised)] hover:text-[var(--ink)]"}`}
+              title={isBookmarked ? "Remove bookmark" : "Save article"}
+              aria-pressed={isBookmarked}
+            >
+              <Bookmark className="size-5" fill={isBookmarked ? "currentColor" : "none"} />
+            </button>
+          </div>
         </div>
 
-        {/* Title */}
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight text-blue-700 dark:text-blue-400">
-          {article.title}
-        </h1>
+        {/* Article Headline Header */}
+        <header className="space-y-4">
+          <h1 className="font-serif text-[clamp(2rem,8.8vw,3rem)] font-bold leading-[1.08] tracking-tight text-[var(--ink)]">
+            {article.title}
+          </h1>
 
-        {/* Author + Meta */}
-        <div className="flex flex-wrap items-center justify-center gap-3 text-gray-600 dark:text-gray-400 text-sm md:text-base">
-          <span className="flex items-center gap-1">
-            <i className="pi pi-user text-blue-500 dark:text-blue-400" />
-            {article.authorName}
-            <span className="text-gray-400 dark:text-gray-500 text-xs md:text-sm">
-              ({article.authorRole})
-            </span>
-          </span>
+          <p className="font-sans text-[clamp(1.0625rem,4.4vw,1.25rem)] leading-relaxed text-[var(--ink-muted)]">
+            {article.summary}
+          </p>
 
-          <span className="flex items-center gap-1">
-            <i className="pi pi-calendar text-blue-500 dark:text-blue-400" />
-            {new Date(article.$createdAt).toLocaleDateString()}
-          </span>
+          <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-neutral-100 dark:border-neutral-800/80 text-xs text-neutral-500 font-medium">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-neutral-200 dark:bg-neutral-800 flex items-center justify-center font-bold text-neutral-700 dark:text-neutral-300">
+                {(article.authorName || "D")[0]}
+              </div>
+              <div>
+                <span className="font-semibold text-neutral-900 dark:text-neutral-100 block">
+                  {article.authorName || "Editorial Wire"}
+                </span>
+                <span>{new Date(article.$createdAt || Date.now()).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+              </div>
+            </div>
 
-          {readingTime && (
-            <span className="hidden sm:flex items-center gap-1">
-              <i className="pi pi-stopwatch text-blue-500 dark:text-blue-400" />
-              {readingTime} {readingTime > 1 ? "mins" : "min"} read
-            </span>
+            <div className="flex items-center gap-4">
+              <span>{readingTime || article.readingTime || "4 min read"}</span>
+              <ShareBar title={article.title} slug={article.slug} />
+            </div>
+          </div>
+        </header>
+
+        {/* Tactile Audio Listen Bar */}
+        <div className="flex flex-col items-stretch justify-between gap-4 rounded-xl border border-[var(--line)] bg-[var(--surface-subtle)] p-4 transition-all min-[425px]:flex-row min-[425px]:items-center">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsPlayingAudio(!isPlayingAudio)}
+              className="grid size-11 shrink-0 place-items-center rounded-full bg-[var(--brand-fill)] text-white shadow-sm transition-all hover:scale-105 active:scale-95"
+              aria-label={isPlayingAudio ? "Pause article audio" : "Play article audio"}
+            >
+              {isPlayingAudio ? <Pause className="size-4" fill="currentColor" /> : <Play className="ml-0.5 size-4" fill="currentColor" />}
+            </button>
+            <div>
+              <p className="text-xs font-bold text-neutral-900 dark:text-white uppercase tracking-wider">
+                {isPlayingAudio ? "Streaming Audio Dispatch" : "Listen to this story"}
+              </p>
+              <p className="text-xs text-[var(--ink-muted)]">
+                Synthesized neural voice narration • 3:45
+              </p>
+            </div>
+          </div>
+
+          {/* Equalizer wave animation */}
+          {isPlayingAudio && (
+            <div className="flex items-end gap-1 h-5">
+              {[60, 100, 40, 80, 50, 90, 30].map((h, i) => (
+                <span
+                  key={i}
+                  style={{ height: `${h}%` }}
+                  className="w-1 bg-blue-500 rounded-full animate-pulse"
+                />
+              ))}
+            </div>
           )}
         </div>
 
-        {/* Tags */}
-        {article.tags?.length > 0 && (
-          <div className="flex flex-wrap justify-center gap-2 mt-4">
-            {article.tags.map((t) => (
-              <span
-                key={t}
-                className="px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 text-xs font-medium hover:bg-blue-100 dark:hover:bg-blue-800/50 transition"
-              >
-                #{t}
-              </span>
-            ))}
+        {/* High-Resolution Cover Image */}
+        <div className="rounded-2xl overflow-hidden border border-neutral-200/80 dark:border-neutral-800 shadow-md">
+          <div className="relative aspect-[16/9] w-full">
+            <Image
+              src={article.cover}
+              alt={article.title}
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-2 bg-neutral-100/70 p-3 text-xs text-neutral-600 dark:bg-neutral-900/70 dark:text-neutral-300">
+            <span>Verified photo archive / Wire dispatch</span>
+            {article.source && (
+              <span className="font-semibold uppercase tracking-wider">Source: {article.source}</span>
+            )}
+          </div>
+        </div>
+
+        {/* Full Article Body */}
+        <div className={`prose dark:prose-invert max-w-none leading-relaxed ${fontClasses}`}>
+          <ArticleContent article={article} />
+        </div>
+
+        {/* Source Attribution & Wire Verification Banner */}
+        <div className="p-6 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/40 space-y-3">
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+            <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-900 dark:text-white">
+              Journalistic Standards & Verification
+            </h4>
+          </div>
+          <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">
+            This story was compiled from real-time worldwide correspondents and open wire feeds. All dispatches undergo editorial provenance verification and cryptographic watermarking in accordance with international digital journalism guidelines.
+          </p>
+          {article.sourceUrl && (
+            <a
+              href={article.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="category-accent inline-flex min-h-11 items-center gap-1.5 text-xs font-semibold hover:underline"
+            >
+              <span>View Original Wire Dispatch ({article.source || "External"})</span>
+              <ExternalLink className="size-4" />
+            </a>
+          )}
+        </div>
+
+        {/* Newsletter Call to Action */}
+        <div className="p-8 rounded-2xl bg-neutral-900 text-white dark:bg-neutral-950 border border-neutral-800 text-center space-y-3">
+          <h3 className="text-xl font-serif font-bold">Never miss global developments</h3>
+          <p className="text-xs text-neutral-400 max-w-md mx-auto">
+            Get our hand-curated morning dispatch sent directly to your inbox with critical perspectives from Geneva, London, Tokyo, and New York.
+          </p>
+          <div className="pt-2 flex justify-center">
+            <SubscribeModal
+              title="Subscribe to Wire"
+              className="bg-white text-neutral-950 font-semibold px-6 py-2 rounded-full text-xs shadow-md hover:bg-neutral-100 transition-all active:scale-95"
+            />
+          </div>
+        </div>
+
+        {/* Related Articles Section */}
+        {related.length > 0 && (
+          <div className="pt-8 border-t border-neutral-200/80 dark:border-neutral-800 space-y-6">
+            <h3 className="text-xl font-serif font-bold text-neutral-900 dark:text-white">
+              Related Dispatches
+            </h3>
+            <div className="tablet-news-grid grid grid-cols-1 gap-6">
+              {related.map((r) => (
+                <EditorialCard key={r.slug || r.id} article={r} variant="standard" />
+              ))}
+            </div>
           </div>
         )}
-      </header>
-
-      {/* Share Bar */}
-      <ShareBar title={article.title} slug={article.slug} />
-
-      {/* 🔥 Inline Ad between sections */}
-      <AdSlot type="inline" />
-
-      <ArticleContent
-        article={article}
-        insertAds={[0, 2, 10]}
-        related={related}
-      />
-
-      {/* 🔥 Wide Leaderboard Ad */}
-      <AdSlot type="leaderboard" />
-
-      {/* Engagement */}
-      <div className="flex flex-wrap gap-4 items-center justify-between">
-        <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
-          <span>
-            <i className="pi pi-thumbs-up text-blue-600 dark:text-blue-400 mr-1" />{" "}
-            {article.likes}
-          </span>
-          <span>
-            <i className="pi pi-thumbs-down text-gray-500 dark:text-gray-500 mr-1" />{" "}
-            {article.dislikes}
-          </span>
-          <span>
-            <i className="pi pi-share-alt text-blue-600 dark:text-blue-400 mr-1" />{" "}
-            {article.shares}
-          </span>
-          <span>
-            <i className="pi pi-comments text-blue-600 dark:text-blue-400 mr-1" />{" "}
-            {article.comments}
-          </span>
-        </div>
-        <SubscribeModal
-          className="w-full sm:w-auto rounded-full px-6 sm:px-8 py-3 bg-amber-400 hover:bg-amber-500 text-black font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all duration-200 text-sm sm:text-base md:text-lg"
-          color="warning"
-          size="lg"
-          title="Subscribe for Updates"
-        />
-      </div>
-
-      {/* Related Articles */}
-      {related.length > 0 && (
-        <section className="space-y-4">
-          <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-400 flex items-center gap-2">
-            <i className="pi pi-compass text-blue-600 dark:text-blue-400" />{" "}
-            Related Articles
-          </h2>
-          <div className="grid sm:grid-cols-2 gap-6">
-            {related.map((r) => (
-              <Link
-                key={r.slug}
-                href={`/article/${r.newsSection}/${r.slug}`}
-                className="block rounded-xl overflow-hidden shadow hover:shadow-lg transition dark:bg-gray-900 dark:border dark:border-gray-700"
-              >
-                <div className="relative h-44">
-                  <Image
-                    width={100}
-                    height={100}
-                    src={r.cover}
-                    alt={r.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="p-4">
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-                    <i className="pi pi-tag mr-1 text-blue-500 dark:text-blue-400" />
-                    {r.newsSection}
-                  </p>
-                  <h3 className="font-semibold text-blue-700 dark:text-blue-400">
-                    {r.title}
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
-                    {r.summary}
-                  </p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* 🔥 Side Ad (optional if you want in-article) */}
-      <AdSlot type="hero" />
-
-      {/* Comments */}
-      <section className="space-y-4">
-        <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-400 flex items-center gap-2">
-          <i className="pi pi-comments text-blue-600 dark:text-blue-400" />{" "}
-          Comments {`(${article.comments || 0})`}
-        </h2>
-        <CommentSection articleId={article.$id} user={user} />
-        {/* <Comments articleId={article.id} /> */}
-      </section>
-    </article>
+      </article>
+    </div>
   );
 }

@@ -4,7 +4,7 @@ export const siteConfig = {
   description:
     "Linkcon News delivers trusted, fast, and insightful coverage across Nigeria and the world.",
   url: "https://linkconnews.com", // replace with your real domain
-  logo: "https://fra.cloud.appwrite.io/v1/storage/buckets/6880345f000409910241/files/6898a18400297a7b024d/view?project=687746aa001066dbe64c&mode=admin",
+  logo: "/favicon.ico",
   covers: [
   {
     title: "Politics",
@@ -112,6 +112,10 @@ export const siteConfig = {
       href: "/top-news",
     },
     {
+      label: "World News",
+      href: "/world-news",
+    },
+    {
       label: "Politics",
       href: "/politics",
     },
@@ -132,10 +136,6 @@ export const siteConfig = {
       href: "/sports",
     },
     {
-      label: "Business",
-      href: "/business",
-    },
-    {
       label: "Entertainment",
       href: "/entertainment",
     },
@@ -146,10 +146,6 @@ export const siteConfig = {
     {
       label: "Opinion",
       href: "/opinion",
-    },
-    {
-      label: "World News",
-      href: "/world-news",
     },
   ],
   categories: [
@@ -163,6 +159,7 @@ export const siteConfig = {
   ],
 
   newsSections: [
+    "World",
     "Politics",
     "Business",
     "Technology",
@@ -170,91 +167,21 @@ export const siteConfig = {
     "Sports",
     "Entertainment",
     "Education",
-    "World",
   ],
 
-  // Instead of mixing in categories, handle placement separately
+  // Placement definitions
   placements: [
     { key: "front-page", label: "Front Page" },
     { key: "breaking-news", label: "Breaking News" },
     { key: "top-stories", label: "Top Stories" },
+    { key: "trending", label: "Trending" },
     { key: "none", label: "None" },
   ],
 
-  dashboardSideBar: [
-    {
-      label: "Dashboard",
-      icon: "pi pi-chart-bar",
-      path: "/admin/dashboard",
-    },
-    {
-      label: "Create",
-      icon: "pi pi-pencil",
-      path: "/admin/publish",
-    },
-    {
-      label: "Content Library",
-      icon: "pi pi-book",
-      path: "/admin/content-library",
-    },
-    {
-      label: "Settings",
-      icon: "pi pi-cog",
-      path: "/admin/settings",
-    },
-    {
-      separator: true,
-    },
-    {
-      label: "Visit Site",
-      icon: "pi pi-home",
-      path: "/",
-      external: true,
-    },
-  ],
-  navMenuItems: [
-    {
-      label: "Dashboard",
-      href: "/dashboard",
-    },
-    {
-      label: "Create Article",
-      href: "/dashboard/create",
-    },
-    {
-      label: "Manage Articles",
-      href: "/dashboard/articles",
-    },
-    {
-      label: "Categories",
-      href: "/dashboard/categories",
-    },
-    {
-      label: "Tags",
-      href: "/dashboard/tags",
-    },
-    {
-      label: "Profile",
-      href: "/profile",
-    },
-    {
-      label: "Settings",
-      href: "/settings",
-    },
-    {
-      label: "Help & Feedback",
-      href: "/help-feedback",
-    },
-    {
-      label: "Logout",
-      href: "/logout",
-    },
-  ],
   links: {
     github: "https://github.com/linkcon-news",
     twitter: "https://twitter.com/linkcon_news",
     docs: "https://linkcon.news/docs",
     discord: "https://discord.gg/linkcon",
-    sponsor: "https://patreon.com/linkconnews",
   },
 };

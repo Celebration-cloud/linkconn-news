@@ -2,10 +2,11 @@
 "use client";
 
 import { Card, CardBody } from "@heroui/react";
+import { Mail, MapPin, Phone } from "lucide-react";
 
 export default function PrivacyPolicyPage() {
   return (
-    <section className="max-w-6xl mx-auto px-6 py-12 space-y-12">
+    <section className="site-container space-y-10 py-10 text-[var(--ink)] min-[720px]:space-y-12 min-[720px]:py-12">
       {/* Header */}
       <header className="text-center space-y-4">
         <h1 className="text-4xl md:text-5xl font-extrabold text-blue-600">
@@ -140,8 +141,8 @@ export default function PrivacyPolicyPage() {
           </p>
           <p>
             While we take strong precautions, no online platform is completely
-            secure. You are encouraged to protect your own login credentials and
-            avoid sharing sensitive details in comments or forms.
+            secure. Avoid sharing passwords, financial details, or other
+            sensitive information in emails or forms.
           </p>
         </CardBody>
       </Card>
@@ -201,15 +202,15 @@ export default function PrivacyPolicyPage() {
           </p>
           <div className="space-y-2">
             <p>
-              <i className="pi pi-envelope mr-1"></i> <strong>Email:</strong>{" "}
+              <Mail className="mr-1 inline size-4" /> <strong>Email:</strong>{" "}
               privacy@linkconnews.com
             </p>
             <p>
-              <i className="pi pi-phone mr-1"></i> <strong>Phone:</strong>{" "}
+              <Phone className="mr-1 inline size-4" /> <strong>Phone:</strong>{" "}
               +234-800-123-4567
             </p>
             <p>
-              <i className="pi pi-map-marker mr-1"></i>{" "}
+              <MapPin className="mr-1 inline size-4" />{" "}
               <strong>Address:</strong> Linkcon Media HQ, Lagos, Nigeria
             </p>
           </div>

@@ -33,13 +33,15 @@ export default async function BusinessPage({ searchParams }) {
   const mappedArticles =
     documents.length > 0
       ? documents.map((a) => ({
-          id: a.$id,
+          ...a,
+          id: a.$id || a.id,
           title: a.title,
           slug: a.slug,
           summary: a.summary,
-          date: a.$createdAt,
+          date: a.$createdAt || a.publishedAt,
           image: a.cover,
           author: a.authorName,
+          section: a.section || a.newsSection || "Business",
         }))
       : [];
 
@@ -47,7 +49,6 @@ export default async function BusinessPage({ searchParams }) {
     <SectionLayout
       sectionColor="cyan"
       sectionTitle="Business"
-      sectionIcon="pi-briefcase"
       sectionLink="/business"
       sectionUrlParams="business"
       ctaLabel="See all business"

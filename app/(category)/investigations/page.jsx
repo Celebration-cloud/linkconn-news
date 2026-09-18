@@ -44,7 +44,6 @@ export default async function InvestigationsPage({ searchParams }) {
     <SectionLayout
       sectionColor="red"
       sectionTitle="Investigations"
-      sectionIcon="pi-search"
       sectionLink="/investigations"
       sectionUrlParams="investigations"
       ctaLabel="See all investigations"

@@ -33,13 +33,15 @@ export default async function WorldNewsPage({ searchParams }) {
   const mappedArticles =
     documents.length > 0
       ? documents.map((a) => ({
-          id: a.$id,
+          ...a,
+          id: a.$id || a.id,
           title: a.title,
           slug: a.slug,
           summary: a.summary,
-          date: a.$createdAt,
+          date: a.$createdAt || a.publishedAt,
           image: a.cover,
           author: a.authorName,
+          section: a.section || a.newsSection || "World",
         }))
       : [];
 
@@ -47,7 +49,6 @@ export default async function WorldNewsPage({ searchParams }) {
     <SectionLayout
       sectionColor="green"
       sectionTitle="World News"
-      sectionIcon="pi-globe"
       sectionLink="/world-news"
       sectionUrlParams="world-news"
       ctaLabel="See all world news"

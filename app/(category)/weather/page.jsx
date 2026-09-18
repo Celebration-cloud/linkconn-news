@@ -44,7 +44,6 @@ export default async function WeatherPage({ searchParams }) {
     <SectionLayout
       sectionColor="indigo"
       sectionTitle="Weather"
-      sectionIcon="pi-sun"
       sectionLink="/weather"
       sectionUrlParams="weather"
       ctaLabel="See all weather"

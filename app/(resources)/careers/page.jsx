@@ -17,6 +17,7 @@ import {
 } from "@heroui/react";
 import { useForm } from "react-hook-form";
 import { showToast } from "@/utils/toast";
+import { BookOpen, Code2, Palette, Pencil, Video } from "lucide-react";
 
 export default function CareersPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,35 +34,35 @@ export default function CareersPage() {
     {
       title: "News Reporter",
       location: "Remote | Full-Time",
-      icon: "pi pi-pencil",
+      icon: Pencil,
       description:
         "Cover breaking news, interview sources, and deliver stories that shape conversations. Strong research and storytelling skills required.",
     },
     {
       title: "Content Editor",
       location: "Lagos | Hybrid",
-      icon: "pi pi-book",
+      icon: BookOpen,
       description:
         "Edit and proofread articles, ensure factual accuracy, and guide reporters on structure, clarity, and tone.",
     },
     {
       title: "Frontend Developer",
       location: "Remote | Contract",
-      icon: "pi pi-code",
+      icon: Code2,
       description:
         "Build, test, and maintain scalable interfaces using Next.js, Tailwind, and React. Work closely with designers to optimize UX.",
     },
     {
       title: "Video Producer",
       location: "Remote | Freelance",
-      icon: "pi pi-video",
+      icon: Video,
       description:
         "Create engaging short and long-form video content for social and news platforms. Strong storytelling through visuals is key.",
     },
     {
       title: "Graphics Designer",
       location: "Hybrid | Contract",
-      icon: "pi pi-palette",
+      icon: Palette,
       description:
         "Design visuals for articles, infographics, and digital campaigns. Must understand brand consistency and modern design trends.",
     },
@@ -72,42 +73,23 @@ export default function CareersPage() {
     setIsModalOpen(true);
   };
 
-  const onSubmit = async (data) => {
-    try {
-      const res = await fetch("/api/public/apply", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, job: selectedJob }),
-      });
-
-      const result = await res.json();
-      if (result.success) {
-        showToast({
-          title: "Success",
-          description: "Application sent successfully!",
-          color: "success",
-        });
-        reset();
-        setIsModalOpen(false);
-      } else {
-        showToast({
-          title: "Error",
-          description: "Failed to send. Try again later.",
-          color: "danger",
-        });
-      }
-    } catch (err) {
-      console.error("Error:", err);
-      showToast({
-        title: "Error",
-        description: "Something went wrong.",
-        color: "danger",
-      });
-    }
+  const onSubmit = (data) => {
+    const subject = encodeURIComponent(`Job application: ${selectedJob}`);
+    const body = encodeURIComponent(
+      `Name: ${data.name}\nEmail: ${data.email}\nCV / Portfolio: ${data.cv}\n\n${data.message}`
+    );
+    window.location.href = `mailto:ojinguluc@gmail.com?subject=${subject}&body=${body}`;
+    showToast({
+      title: "Email app opened",
+      description: "Attach your CV, review the message, and send your application.",
+      color: "success",
+    });
+    reset();
+    setIsModalOpen(false);
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-16 space-y-16 transition-colors duration-300 bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100">
+    <div className="site-container space-y-12 bg-[var(--canvas)] py-12 text-[var(--ink)] transition-colors min-[720px]:space-y-16 min-[720px]:py-16">
       {/* HERO SECTION */}
       <section className="text-center space-y-6">
         <h1 className="text-5xl font-bold text-blue-600 dark:text-blue-400">
@@ -164,8 +146,10 @@ export default function CareersPage() {
         <h2 className="text-3xl font-semibold text-blue-600 dark:text-blue-400 mb-8 text-center">
           Current Openings
         </h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {jobs.map((job, index) => (
+        <div className="tablet-news-grid grid grid-cols-1 gap-6 lg:grid-cols-3">
+          {jobs.map((job, index) => {
+            const JobIcon = job.icon;
+            return (
             <Card
               key={index}
               shadow="sm"
@@ -178,9 +162,7 @@ export default function CareersPage() {
                     {job.location}
                   </p>
                 </div>
-                <i
-                  className={`${job.icon} text-blue-600 dark:text-blue-400 text-xl`}
-                ></i>
+                <JobIcon className="size-6 text-[var(--brand)]" />
               </CardHeader>
               <CardBody>
                 <p className="text-gray-600 dark:text-gray-300 mb-4">
@@ -195,7 +177,8 @@ export default function CareersPage() {
                 </Button>
               </CardBody>
             </Card>
-          ))}
+            );
+          })}
         </div>
       </section>
 

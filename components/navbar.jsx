@@ -1,314 +1,163 @@
 /* eslint-disable react/react-in-jsx-scope */
 "use client";
-import {
-  Navbar as HeroUINavbar,
-  NavbarContent,
-  NavbarMenu,
-  NavbarMenuToggle,
-  NavbarBrand,
-  NavbarItem,
-  NavbarMenuItem,
-} from "@heroui/react";
-import { Button } from "@heroui/react";
-import NextLink from "next/link";
-import { ThemeSwitch } from "@/components/theme-switch";
-import { SearchIcon, Logo } from "@/components/icons";
-import { siteConfig } from "@/config/site";
-import SocialIcons from "./icons/SocialIcons";
+
 import { useState } from "react";
-import { SubscribeModal } from "./shared/modals/SubscribeModal";
+import NextLink from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import SearchBar from "./SearchBar";
-import UnifiedAuthModal from "./dashboard/UnifiedAuthModal";
-
-/**
- * Full Navbar
- * - All links come from siteConfig
- * - No hard-coded Trending / Latest
- * - Top links, categories, navItems supported
- */
-
-const COLOR_MAP = {
-  blue: { primary: "text-blue-600", hover: "text-blue-500" },
-  red: { primary: "text-red-600", hover: "text-red-500" },
-  green: { primary: "text-green-600", hover: "text-green-500" },
-  amber: { primary: "text-amber-600", hover: "text-amber-500" },
-  purple: { primary: "text-purple-600", hover: "text-purple-500" },
-  yellow: { primary: "text-yellow-400", hover: "text-yellow-300" },
-  cyan: { primary: "text-cyan-600", hover: "text-cyan-500" },
-  pink: { primary: "text-pink-600", hover: "text-pink-500" },
-  indigo: { primary: "text-indigo-600", hover: "text-indigo-500" },
-  orange: { primary: "text-orange-600", hover: "text-orange-500" },
-};
+import { siteConfig } from "@/config/site";
+import { ThemeSwitch } from "@/components/theme-switch";
+import { Menu, Search, X } from "lucide-react";
+import { SubscribeModal } from "./shared/modals/SubscribeModal";
+import { CommandSearchModal } from "./shared/CommandSearchModal";
+import { LiveTicker } from "./shared/LiveTicker";
+import SocialIcons from "./icons/SocialIcons";
 
 export function Navbar() {
   const pathname = usePathname() || "/";
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [searchBarActive, setSearchBarActive] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const isActive = (href) => {
     if (!href) return false;
-    // exact or startsWith for section routes
+    if (href === "/") return pathname === "/";
     return pathname === href || pathname.startsWith(href + "/");
   };
 
-  const searchBar = (
-    <SearchBar />
-  );
-
   return (
-    <>
-      {/* Top Utility Bar (desktop only) */}
-      <div className="hidden lg:flex bg-blue-700 text-white px-6 py-2 text-sm justify-between">
-        <div className="flex gap-4">
-          {siteConfig.topLinks?.map((link, i) => (
-            <NextLink
-              key={i}
-              href={link.href}
-              className={`hover:text-yellow-300 ${
-                isActive(link.href) ? COLOR_MAP.yellow.primary : ""
-              }`}
+    <header className="sticky top-0 z-40 w-full transition-colors duration-300">
+      {/* Live Ticker Bar at the very top */}
+      <LiveTicker />
+
+      {/* Main Editorial Bar */}
+      <div className="border-b border-[var(--line)] bg-[color-mix(in_srgb,var(--surface)_94%,transparent)] backdrop-blur-md">
+        <div className="site-container flex items-center justify-between gap-2 py-2.5 min-[375px]:gap-4 sm:py-3.5">
+          {/* Left: Social and Date or Mobile menu toggle */}
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="-ml-2 grid size-11 place-items-center rounded-xl text-[var(--ink-muted)] transition-colors hover:bg-[var(--surface-raised)] lg:hidden"
+              aria-label="Toggle Menu"
             >
-              {link.label}
-            </NextLink>
-          ))}
-        </div>
+              {isMobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+            </button>
 
-        <div className="flex gap-4">
-          <NextLink
-            href="/about"
-            className={`hover:text-yellow-300 ${isActive("/about") ? COLOR_MAP.yellow.primary : ""}`}
-          >
-            About Us
-          </NextLink>
-          <NextLink
-            href="/contact"
-            className={`hover:text-yellow-300 ${isActive("/contact") ? COLOR_MAP.yellow.primary : ""}`}
-          >
-            Contact Us
-          </NextLink>
-        </div>
-      </div>
-
-      {/* Main Header */}
-      <HeroUINavbar
-        position="static"
-        isBordered
-        maxWidth="2xl"
-        isMenuOpen={isMenuOpen}
-        onMenuOpenChange={setIsMenuOpen}
-        className="bg-gradient-to-r from-blue-600 to-blue-500 text-white  w-full overflow-x-auto scrollbar-hide md:h-44 max-md:py-3"
-      >
-        <NavbarContent justify="start" className="hidden sm:flex">
-          <SocialIcons size="text-2xl" />
-        </NavbarContent>
-
-        <NavbarContent justify="center">
-          <NavbarBrand>
-            <NextLink href="/" className="hidden md:flex items-center gap-2">
-              <Logo className="h-20" height={100} width={220} />
-            </NextLink>
-            <NextLink href="/" className="flex md:hidden items-center gap-2">
-              <Logo className="md:h-20" height={50} width={120} />
-            </NextLink>
-          </NavbarBrand>
-        </NavbarContent>
-
-        {/* Right actions on desktop */}
-        <NavbarContent
-          justify="end"
-          className="hidden sm:flex items-center gap-4"
-        >
-          <Button
-            isIconOnly
-            className="border-white bg-white"
-            radius="full"
-            variant="bordered"
-            onPress={() => setSearchBarActive((s) => !s)}
-          >
-            <SearchIcon className="text-blue-500 font-bold" />
-          </Button>
-
-          <ThemeSwitch />
-          <SubscribeModal />
-          <UnifiedAuthModal />
-        </NavbarContent>
-
-        {/* Mobile actions */}
-        <NavbarContent justify="end" className="sm:hidden">
-          <Button
-            isIconOnly
-            className="border-white bg-white"
-            radius="full"
-            onPress={() => setSearchBarActive((prev) => !prev)}
-            variant="bordered"
-          >
-            <SearchIcon className="text-blue-500 font-bold" />
-          </Button>
-          <ThemeSwitch />
-          <NavbarMenuToggle />
-        </NavbarContent>
-
-        {/* Mobile Menu */}
-        <NavbarMenu className="bg-blue-600 text-white mt-6 px-4 pb-6">
-          <div className="mt-6 flex flex-col gap-6 mb-10">
-            {/* Top Links */}
-            <div className="flex flex-col gap-3">
-              <p className="uppercase text-xs text-blue-200 tracking-wide">
-                Top Links
-              </p>
-              {siteConfig.topLinks?.map((link, i) => (
-                <NavbarMenuItem key={`top-${i}`}>
-                  <NextLink
-                    href={link.href}
-                    onClick={() => setIsMenuOpen(false)}
-                    className={`block text-lg font-medium transition-colors ${
-                      isActive(link.href)
-                        ? "text-yellow-400"
-                        : "hover:text-yellow-300"
-                    }`}
-                  >
-                    {link.label}
-                  </NextLink>
-                </NavbarMenuItem>
-              ))}
-
-              <NavbarMenuItem>
-                <NextLink
-                  href="/about"
-                  onClick={() => setIsMenuOpen(false)}
-                  className={`block text-lg font-medium transition-colors ${
-                    isActive("/about")
-                      ? "text-yellow-400"
-                      : "hover:text-yellow-300"
-                  }`}
-                >
-                  About Us
-                </NextLink>
-              </NavbarMenuItem>
-
-              <NavbarMenuItem>
-                <NextLink
-                  href="/contact"
-                  onClick={() => setIsMenuOpen(false)}
-                  className={`block text-lg font-medium transition-colors ${
-                    isActive("/contact")
-                      ? "text-yellow-400"
-                      : "hover:text-yellow-300"
-                  }`}
-                >
-                  Contact Us
-                </NextLink>
-              </NavbarMenuItem>
-            </div>
-
-            <hr className="border-blue-400/40" />
-
-            {/* Categories */}
-            <div className="flex flex-col gap-3">
-              <p className="uppercase text-xs text-blue-200 tracking-wide">
-                Categories
-              </p>
-
-              <details className="group">
-                <summary className="cursor-pointer list-none text-lg font-semibold hover:text-yellow-300">
-                  Explore Categories
-                </summary>
-
-                <div className="mt-2 ml-3 flex flex-col gap-2">
-                  {siteConfig.categories?.map((cat, i) => (
-                    <NextLink
-                      key={i}
-                      href={`/${cat.key}`}
-                      onClick={() => setIsMenuOpen(false)}
-                      className={`block text-base transition-colors ${
-                        isActive(`/${cat.key}`)
-                          ? "text-yellow-400"
-                          : "hover:text-yellow-300"
-                      }`}
-                    >
-                      {cat.label}
-                    </NextLink>
-                  ))}
-                </div>
-              </details>
-            </div>
-
-            <hr className="border-blue-400/40" />
-
-            {/* Main nav items */}
-            <div className="flex flex-col gap-3">
-              <p className="uppercase text-xs text-blue-200 tracking-wide">
-                Sections
-              </p>
-              {siteConfig.navItems?.map((item, i) => (
-                <NavbarMenuItem key={`nav-${i}`}>
-                  <NextLink
-                    href={item.href}
-                    onClick={() => setIsMenuOpen(false)}
-                    className={`block text-lg font-medium transition-colors ${
-                      isActive(item.href)
-                        ? "text-yellow-400"
-                        : "hover:text-yellow-300"
-                    }`}
-                  >
-                    {item.label}
-                  </NextLink>
-                </NavbarMenuItem>
-              ))}
-            </div>
-
-            <hr className="border-blue-400/40" />
-
-            {/* Action buttons */}
-            <div className="flex flex-col gap-3">
-              <UnifiedAuthModal />
-              <SubscribeModal />
+            <div className="hidden lg:flex items-center gap-3">
+              <SocialIcons size="text-lg" />
+              <div className="h-4 w-px bg-neutral-200 dark:bg-neutral-800" />
+              <span className="text-xs font-medium uppercase tracking-wide text-neutral-400 dark:text-neutral-500">
+                Global Edition
+              </span>
             </div>
           </div>
-        </NavbarMenu>
-      </HeroUINavbar>
 
-      {/* Secondary nav (center links) */}
-      <HeroUINavbar
-        position="sticky"
-        isBordered
-        maxWidth="2xl"
-        className="bg-gradient-to-r from-blue-600 to-blue-500 text-white hidden sm:flex"
-      >
-        <div className="w-full overflow-x-auto scrollbar-hide">
-          <div className="flex items-center justify-center gap-6 px-4 min-w-max">
-            {siteConfig.navItems?.map((item, i) => (
-              <NavbarItem key={i}>
+          {/* Center: Prestige Editorial Logo & Title */}
+          <div className="flex min-w-0 flex-col items-center">
+            <NextLink href="/" className="group block" aria-label="Linkcon News home">
+              <Image
+                src={siteConfig.logo}
+                alt="Linkcon News"
+                width={601}
+                height={199}
+                priority
+                className="h-auto w-[112px] transition-transform group-hover:scale-[1.01] min-[375px]:w-[132px] sm:w-[168px]"
+              />
+            </NextLink>
+            <span className="mt-0.5 hidden text-xs font-semibold uppercase tracking-[0.2em] text-neutral-400 dark:text-neutral-500 sm:inline">
+              Verified International Journal
+            </span>
+          </div>
+
+          {/* Right: Search shortcut button, Theme Switch, Subscribe */}
+          <div className="flex items-center gap-2.5">
+            {/* Quick Search Button (Command-K trigger) */}
+            <button
+              onClick={() => setIsSearchOpen(true)}
+              className="grid size-11 place-items-center rounded-xl border border-[var(--line)] bg-[var(--surface-subtle)] text-[var(--ink-muted)] transition-all hover:bg-[var(--surface-raised)] active:scale-95 min-[720px]:flex min-[720px]:w-auto min-[720px]:gap-2 min-[720px]:px-3"
+              aria-label="Search the news"
+            >
+              <Search className="size-4" />
+              <span className="hidden min-[720px]:inline">Search wire...</span>
+              <kbd className="hidden items-center rounded border border-neutral-200 bg-white px-1.5 py-0.5 text-xs font-bold text-neutral-400 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-500 sm:inline-flex">
+                ⌘K
+              </kbd>
+            </button>
+
+            <ThemeSwitch />
+
+            <div className="hidden sm:block">
+              <SubscribeModal
+                title="Subscribe"
+                className="bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-neutral-950 text-xs font-semibold px-4 py-1.5 rounded-full shadow-sm transition-all active:scale-95"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Secondary Category Navigation Row */}
+        <nav className="hidden overflow-x-auto border-t border-[var(--line)] lg:block" aria-label="News categories">
+          <div className="mx-auto flex min-w-max max-w-7xl items-center justify-center gap-1 px-4 py-1.5">
+            {siteConfig.navItems?.map((item) => {
+              const active = isActive(item.href);
+              return (
                 <NextLink
+                  data-category={item.href.replace(/^\//, "")}
+                  key={item.href}
                   href={item.href}
-                  className={`font-medium whitespace-nowrap hover:text-yellow-300 ${
-                    isActive(item.href) ? COLOR_MAP.yellow.primary : ""
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all whitespace-nowrap ${
+                    active
+                      ? "category-fill shadow-sm"
+                      : "text-[var(--ink-muted)] hover:bg-[var(--category-tint)] hover:text-[var(--category-accent)]"
                   }`}
                 >
                   {item.label}
                 </NextLink>
-              </NavbarItem>
-            ))}
+              );
+            })}
+          </div>
+        </nav>
+      </div>
+
+      {/* Mobile Drawer Menu */}
+      {isMobileMenuOpen && (
+        <div className="animate-in slide-in-from-top-2 border-b border-[var(--line)] bg-[var(--surface)] p-3 shadow-xl duration-200 min-[375px]:p-4 lg:hidden">
+          <div className="flex flex-col gap-4">
+            <p className="text-xs font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
+              News Sections
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              {siteConfig.navItems?.map((item) => {
+                const active = isActive(item.href);
+                return (
+                  <NextLink
+                    data-category={item.href.replace(/^\//, "")}
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`flex min-h-11 items-center rounded-lg px-3 py-2 text-sm font-semibold transition-all ${
+                      active
+                        ? "category-fill"
+                        : "text-[var(--ink)] hover:bg-[var(--category-tint)] hover:text-[var(--category-accent)]"
+                    }`}
+                  >
+                    {item.label}
+                  </NextLink>
+                );
+              })}
+            </div>
+
+            <div className="pt-3 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-between">
+              <SubscribeModal
+                title="Subscribe to Wire"
+                className="min-h-11 w-full rounded-xl bg-[var(--brand-fill)] py-2 text-sm font-semibold text-white"
+              />
+            </div>
           </div>
         </div>
-      </HeroUINavbar>
-
-      {/* Search bar row */}
-      {searchBarActive && (
-        <HeroUINavbar
-          position="sticky"
-          isBordered
-          maxWidth="2xl"
-          className="bg-gradient-to-r from-blue-600 to-blue-500 text-white"
-        >
-          <div className="w-full flex justify-center items-center">
-            <NavbarContent justify="center" className="w-2/3">
-              {searchBar}
-            </NavbarContent>
-          </div>
-        </HeroUINavbar>
       )}
-    </>
+
+      {/* Command-K Search Modal */}
+      <CommandSearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+    </header>
   );
 }

@@ -22,7 +22,6 @@ import { showToast } from "@/utils/toast";
 
 export default function AdvertisePage() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // ✅ loading state
   const {
     register,
     handleSubmit,
@@ -30,45 +29,23 @@ export default function AdvertisePage() {
     reset,
   } = useForm();
 
-  const onSubmit = async (data) => {
-    setIsLoading(true); // start loading
-    try {
-      const res = await fetch("/api/public/advertise", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      const result = await res.json();
-      if (result.success) {
-        showToast({
-          title: "Success",
-          description: "Message sent successfully!",
-          color: "success",
-        });
-        reset();
-        setIsOpen(false);
-      } else {
-        showToast({
-          title: "Error",
-          description: "Failed to send message.",
-          color: "error",
-        });
-      }
-    } catch (err) {
-      console.error(err);
-      showToast({
-        title: "Error",
-        description: "Something went wrong.",
-        color: "error",
-      });
-    } finally {
-      setIsLoading(false); // stop loading
-    }
+  const onSubmit = (data) => {
+    const subject = encodeURIComponent(`Advertising inquiry from ${data.company}`);
+    const body = encodeURIComponent(
+      `Name: ${data.name}\nEmail: ${data.email}\nCompany: ${data.company}\n\n${data.message}`
+    );
+    window.location.href = `mailto:ads@linkconnews.com?subject=${subject}&body=${body}`;
+    showToast({
+      title: "Email app opened",
+      description: "Review and send your advertising inquiry from your email app.",
+      color: "success",
+    });
+    reset();
+    setIsOpen(false);
   };
 
   return (
-    <section className="max-w-6xl mx-auto px-6 py-12 space-y-12 bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
+    <section className="site-container space-y-10 bg-[var(--canvas)] py-10 text-[var(--ink)] min-[720px]:space-y-12 min-[720px]:py-12">
       {/* Logo */}
       <div className="text-center">
         <Image
@@ -302,7 +279,7 @@ export default function AdvertisePage() {
                   form="advertise-form"
                   className="bg-yellow-400 text-black dark:bg-yellow-500 dark:text-black font-semibold"
                 >
-                  {isLoading ? "Sending..." : "Submit"} {/* ✅ loading text */}
+                  Open Email App
                 </Button>
               </ModalFooter>
             </>

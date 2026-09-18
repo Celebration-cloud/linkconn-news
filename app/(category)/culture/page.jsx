@@ -44,7 +44,6 @@ export default async function CulturePage({ searchParams }) {
     <SectionLayout
       sectionColor="purple"
       sectionTitle="Culture"
-      sectionIcon="pi-palette"
       sectionLink="/culture"
       sectionUrlParams="culture"
       ctaLabel="See all culture"

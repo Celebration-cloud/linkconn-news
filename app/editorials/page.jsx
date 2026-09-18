@@ -16,7 +16,6 @@ export default function EditorialsPage() {
     <SectionLayout
       sectionColor="purple"
       sectionTitle="Editorials"
-      sectionIcon="pi-edit"
       sectionLink="/editorials"
       ctaLabel="See all editorials"
       demoData={demoEditorials}

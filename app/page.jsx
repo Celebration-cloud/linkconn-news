@@ -1,33 +1,16 @@
 /* eslint-disable react/react-in-jsx-scope */
-import { lazy, Suspense } from "react";
+import { Suspense } from "react";
 import { getMainPageArticles } from "@/lib/actions/getMainPageArticles";
-import { AdSlot } from "@/components/shared/advertisement/AdSlot";
+import HeroNewsSection from "@/components/news-sections/HeroNewsSection";
+import TopNewsSection from "@/components/news-sections/TopNewsSection";
+import WorldNewsSection from "@/components/news-sections/WorldNewsSection";
+import TechnologySection from "@/components/news-sections/TechnologySection";
+import BusinessSection from "@/components/news-sections/BusinessSection";
+import PoliticsSection from "@/components/news-sections/PoliticsSection";
+import SportsSection from "@/components/news-sections/SportsSection";
+import EntertainmentSection from "@/components/news-sections/EntertainmentSection";
 
-// Lazy-load all sections except Hero
-const TopNewsSection = lazy(
-  () => import("@/components/news-sections/TopNewsSection")
-);
-const SportsSection = lazy(
-  () => import("@/components/news-sections/SportsSection")
-);
-const PoliticsSection = lazy(
-  () => import("@/components/news-sections/PoliticsSection")
-);
-const TechnologySection = lazy(
-  () => import("@/components/news-sections/TechnologySection")
-);
-const EntertainmentSection = lazy(
-  () => import("@/components/news-sections/EntertainmentSection")
-);
-const WorldNewsSection = lazy(
-  () => import("@/components/news-sections/WorldNewsSection")
-);
-const BusinessSection = lazy(
-  () => import("@/components/news-sections/BusinessSection")
-);
-const HeroNewsSection = lazy(
-  () => import("@/components/news-sections/HeroNewsSection")
-);
+export const revalidate = 180; // Revalidate every 3 minutes for fresh world feeds
 
 export default async function HomePage() {
   const {
@@ -41,66 +24,64 @@ export default async function HomePage() {
     worldNews,
   } = await getMainPageArticles();
 
-  console.log("Breaking News: ", breakingNews);
-  console.log("Top News: ", topNews);
-  console.log("Sports: ", sports);
-  console.log("Politics: ", politics);
-  console.log("Technology: ", technology);
-  console.log("Business: ", business);
-  console.log("Entertainment: ", entertainment);
-  console.log("World News: ", worldNews);
-
   return (
-    <div className="space-y-24 max-w-7xl mx-auto px-4">
-      {/* Hero + Featured Section */}
-      <Suspense fallback={<div>Loading Breaking News...</div>}>
-        <HeroNewsSection
-          featured={breakingNews[0]}
-          trending={breakingNews.slice(1, 4)}
-        />
-      </Suspense>
+    <div className="site-container space-y-12 pb-16 min-[720px]:space-y-16">
+      {/* Hero Dispatch & Trending Wire */}
+      <HeroNewsSection
+        featured={breakingNews?.[0]}
+        trending={breakingNews?.slice(1, 4)}
+      />
 
-      <AdSlot type="hero" />
+      {/* Thin Editorial Divider */}
+      <div className="h-px w-full bg-neutral-200/80 dark:border-neutral-800/80" />
 
-      <Suspense fallback={<div>Loading Top News...</div>}>
+      {/* Top Stories */}
+      <Suspense fallback={<SectionSkeleton />}>
         <TopNewsSection articles={topNews} />
       </Suspense>
 
-      <AdSlot type="inline" />
-
-      <Suspense fallback={<div>Loading Sports...</div>}>
-        <SportsSection articles={sports} />
+      {/* World News Dispatch */}
+      <Suspense fallback={<SectionSkeleton />}>
+        <WorldNewsSection articles={worldNews} />
       </Suspense>
 
-      <AdSlot type="leaderboard" />
-
-      <Suspense fallback={<div>Loading Politics...</div>}>
-        <PoliticsSection articles={politics} />
-      </Suspense>
-
-      <AdSlot type="leaderboard" />
-
-      <Suspense fallback={<div>Loading Technology...</div>}>
+      {/* Technology & Frontier */}
+      <Suspense fallback={<SectionSkeleton />}>
         <TechnologySection articles={technology} />
       </Suspense>
 
-      <AdSlot type="leaderboard" />
-
-      <Suspense fallback={<div>Loading Business...</div>}>
+      {/* Business & Global Markets */}
+      <Suspense fallback={<SectionSkeleton />}>
         <BusinessSection articles={business} />
       </Suspense>
 
-      <AdSlot type="leaderboard" />
+      {/* Politics & Policy */}
+      <Suspense fallback={<SectionSkeleton />}>
+        <PoliticsSection articles={politics} />
+      </Suspense>
 
-      <Suspense fallback={<div>Loading Entertainment...</div>}>
+      {/* Sports Arena */}
+      <Suspense fallback={<SectionSkeleton />}>
+        <SportsSection articles={sports} />
+      </Suspense>
+
+      {/* Culture & Entertainment */}
+      <Suspense fallback={<SectionSkeleton />}>
         <EntertainmentSection articles={entertainment} />
       </Suspense>
+    </div>
+  );
+}
 
-      <AdSlot type="leaderboard" />
-
-      <Suspense fallback={<div>Loading World News...</div>}>
-        <WorldNewsSection articles={worldNews} />
-      </Suspense>
+function SectionSkeleton() {
+  return (
+    <div className="space-y-4 animate-pulse">
+      <div className="h-8 w-48 bg-neutral-200 dark:bg-neutral-800 rounded-lg" />
+      <div className="tablet-news-grid grid grid-cols-1 gap-4 lg:grid-cols-4">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="aspect-[16/10] bg-neutral-100 dark:bg-neutral-800/60 rounded-xl" />
+        ))}
+      </div>
     </div>
   );
 }

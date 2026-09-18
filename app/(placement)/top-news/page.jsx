@@ -33,13 +33,15 @@ export default async function TopNewsPage({ searchParams }) {
   const mappedArticles =
     documents.length > 0
       ? documents.map((a) => ({
-          id: a.$id,
+          ...a,
+          id: a.$id || a.id,
           title: a.title,
           slug: a.slug,
           summary: a.summary,
-          date: a.$createdAt,
+          date: a.$createdAt || a.publishedAt,
           image: a.cover,
           author: a.authorName,
+          section: a.section || a.newsSection || "Top News",
         }))
       : [];
 
@@ -47,7 +49,6 @@ export default async function TopNewsPage({ searchParams }) {
     <SectionLayout
       sectionColor="blue"
       sectionTitle="Top News"
-      sectionIcon="pi-star"
       sectionLink="/top-news"
       sectionUrlParams="top-news"
       ctaLabel="See all top news"

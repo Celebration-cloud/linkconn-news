@@ -1,115 +1,88 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/react-in-jsx-scope */
-// app/article/[slug]/components/ShareBar.jsx
 "use client";
 
-import { useArticleMeta } from "@/context/ArticleMetaProvider";
-import {
-  Button,
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-} from "@heroui/react";
+import { useState } from "react";
+import { showToast } from "@/utils/toast";
+import { Check, Copy, MessageCircle, Send, Share2 } from "lucide-react";
 
 export default function ShareBar({ title, slug }) {
-  const { recordShare } = useArticleMeta();
-  const url =
+  const [copied, setCopied] = useState(false);
+
+  const getUrl = () =>
     typeof window !== "undefined"
       ? window.location.href
       : `https://www.linkconnews.com/article/${slug}`;
 
-  const handleShare = (href) => {
-    recordShare();
-    window.open(href, "_blank", "noopener,noreferrer");
-  };
-
-  const copy = async () => {
+  const copyLink = async () => {
     try {
-      await navigator.clipboard.writeText(url);
-      recordShare();
+      await navigator.clipboard.writeText(getUrl());
+      setCopied(true);
+      showToast({
+        title: "Link copied to clipboard",
+        color: "success",
+        duration: 2500,
+      });
+      setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error("Copy failed:", err);
     }
   };
 
+  const shareSocial = (url) => {
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
   return (
-    <Dropdown>
-      <DropdownTrigger>
-        <Button className="bg-blue-600 text-white" size="sm">
-          <i className="pi pi-share-alt mr-2" /> Share
-        </Button>
-      </DropdownTrigger>
+    <div className="flex flex-wrap items-center gap-1.5">
+      {/* Copy link button */}
+      <button
+        onClick={copyLink}
+        className="flex min-h-11 items-center gap-1.5 rounded-lg border border-[var(--line)] px-3 text-xs font-semibold text-[var(--ink)] transition-all hover:bg-[var(--surface-raised)] active:scale-95"
+        title="Copy article link"
+      >
+        {copied ? <Check className="size-4 text-emerald-600 dark:text-emerald-400" /> : <Copy className="size-4" />}
+        <span>{copied ? "Copied!" : "Copy"}</span>
+      </button>
 
-      <DropdownMenu aria-label="Share options">
-        <DropdownItem
-          key="facebook"
-          onPress={() =>
-            handleShare(
-              `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`
-            )
-          }
-          startContent={<i className="pi pi-facebook text-blue-600" />}
-        >
-          Facebook
-        </DropdownItem>
+      {/* Twitter / X */}
+      <button
+        onClick={() =>
+          shareSocial(
+            `https://twitter.com/intent/tweet?url=${encodeURIComponent(getUrl())}&text=${encodeURIComponent(title)}`
+          )
+        }
+        className="grid size-11 place-items-center rounded-lg border border-[var(--line)] text-[var(--ink-muted)] transition hover:bg-[var(--surface-raised)] active:scale-95"
+        title="Share on X"
+      >
+        <Share2 className="size-4" />
+      </button>
 
-        <DropdownItem
-          key="twitter"
-          onPress={() =>
-            handleShare(
-              `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`
-            )
-          }
-          startContent={<i className="pi pi-twitter text-blue-400" />}
-        >
-          Twitter
-        </DropdownItem>
+      {/* LinkedIn */}
+      <button
+        onClick={() =>
+          shareSocial(
+            `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(getUrl())}`
+          )
+        }
+        className="grid size-11 place-items-center rounded-lg border border-[var(--line)] text-[var(--ink-muted)] transition hover:bg-[var(--surface-raised)] active:scale-95"
+        title="Share on LinkedIn"
+      >
+        <Send className="size-4" />
+      </button>
 
-        <DropdownItem
-          key="whatsapp"
-          onPress={() =>
-            handleShare(
-              `https://api.whatsapp.com/send?text=${encodeURIComponent(title + " " + url)}`
-            )
-          }
-          startContent={<i className="pi pi-whatsapp text-green-500" />}
-        >
-          WhatsApp
-        </DropdownItem>
-
-        <DropdownItem
-          key="linkedin"
-          onPress={() =>
-            handleShare(
-              `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`
-            )
-          }
-          startContent={<i className="pi pi-linkedin text-blue-700" />}
-        >
-          LinkedIn
-        </DropdownItem>
-
-        <DropdownItem
-          key="telegram"
-          onPress={() =>
-            handleShare(
-              `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`
-            )
-          }
-          startContent={<i className="pi pi-send text-sky-500" />}
-        >
-          Telegram
-        </DropdownItem>
-
-        <DropdownItem
-          key="copy"
-          onPress={copy}
-          startContent={<i className="pi pi-link text-gray-700" />}
-        >
-          Copy Link
-        </DropdownItem>
-      </DropdownMenu>
-    </Dropdown>
+      {/* WhatsApp */}
+      <button
+        onClick={() =>
+          shareSocial(
+            `https://api.whatsapp.com/send?text=${encodeURIComponent(title + " " + getUrl())}`
+          )
+        }
+        className="grid size-11 place-items-center rounded-lg border border-[var(--line)] text-[var(--ink-muted)] transition hover:bg-[var(--surface-raised)] active:scale-95"
+        title="Share on WhatsApp"
+      >
+        <MessageCircle className="size-4" />
+      </button>
+    </div>
   );
 }

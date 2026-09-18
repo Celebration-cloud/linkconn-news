@@ -44,7 +44,6 @@ export default async function LifestylePage({ searchParams }) {
     <SectionLayout
       sectionColor="teal"
       sectionTitle="Lifestyle"
-      sectionIcon="pi-star"
       sectionLink="/lifestyle"
       sectionUrlParams="lifestyle"
       ctaLabel="See all lifestyle"

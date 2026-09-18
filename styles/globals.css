@@ -3,11 +3,228 @@
 /* Note: You may need to change the path to fit your project structure */
  @source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
  @custom-variant dark (&:is(.dark *));
-  @config "../tailwind.config.js";
+ @config "../tailwind.config.js";
+
+:root {
+  color-scheme: light;
+  --canvas: #f5f8fc;
+  --surface: #ffffff;
+  --surface-raised: #eaf1f9;
+  --surface-subtle: #f0f5fb;
+  --ink: #0c1b33;
+  --ink-muted: #52637a;
+  --line: #c9d6e5;
+  --brand: #1457c4;
+  --brand-fill: #1457c4;
+  --brand-fill-hover: #0b469f;
+  --brand-on: #ffffff;
+  --focus: #2f75d9;
+  --category-accent: #1457c4;
+  --category-tint: #e8f0fe;
+}
+.dark {
+  color-scheme: dark;
+  --canvas: #07111f;
+  --surface: #0d1b2a;
+  --surface-raised: #14253a;
+  --surface-subtle: #101f32;
+  --ink: #f5f8fc;
+  --ink-muted: #a8b7ca;
+  --line: #2a405b;
+  --brand: #7cb4ff;
+  --brand-fill: #2f6fd6;
+  --brand-fill-hover: #3e7de1;
+  --brand-on: #ffffff;
+  --focus: #8cbcff;
+  --category-accent: #7cb4ff;
+  --category-tint: #102b52;
+}
+
+body {
+  min-width: 320px;
+  overflow-x: clip;
+  background: var(--canvas);
+  color: var(--ink);
+  font-size: 1rem;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:where(a, button, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+.site-container {
+  width: min(100%, 80rem);
+  margin-inline: auto;
+  padding-inline: 0.75rem;
+}
+
+.site-surface {
+  background-color: var(--surface);
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+.site-muted {
+  color: var(--ink-muted);
+}
+
+.category-accent {
+  color: var(--category-accent);
+}
+
+.category-fill {
+  background-color: var(--category-accent);
+  color: white;
+}
+
+.category-tint {
+  background-color: var(--category-tint);
+  color: var(--category-accent);
+}
+
+[data-category="top-news"] { --category-accent: #1d4ed8; --category-tint: #e8efff; }
+[data-category="world-news"] { --category-accent: #0f766e; --category-tint: #e4f4f2; }
+[data-category="politics"] { --category-accent: #6d28d9; --category-tint: #f0eafe; }
+[data-category="business"] { --category-accent: #047857; --category-tint: #e4f5ee; }
+[data-category="technology"] { --category-accent: #0369a1; --category-tint: #e4f2fa; }
+[data-category="health"] { --category-accent: #be123c; --category-tint: #fde9ee; }
+[data-category="sports"] { --category-accent: #c2410c; --category-tint: #fceddf; }
+[data-category="entertainment"] { --category-accent: #a21caf; --category-tint: #f8e8fa; }
+[data-category="education"] { --category-accent: #92400e; --category-tint: #fbefd8; }
+[data-category="opinion"] { --category-accent: #475569; --category-tint: #edf1f5; }
+[data-category="features"] { --category-accent: #4338ca; --category-tint: #ebeafe; }
+[data-category="investigations"] { --category-accent: #991b1b; --category-tint: #fbe8e8; }
+[data-category="lifestyle"] { --category-accent: #be185d; --category-tint: #fce8f1; }
+[data-category="culture"] { --category-accent: #7e22ce; --category-tint: #f3e9fc; }
+[data-category="weather"] { --category-accent: #b45309; --category-tint: #fbefd9; }
+[data-category="latest"] { --category-accent: #0b4dbb; --category-tint: #e6effd; }
+[data-category="trending"] { --category-accent: #b91c1c; --category-tint: #fce9e9; }
+[data-category="editorials"] { --category-accent: #334155; --category-tint: #edf1f5; }
+
+.dark [data-category="top-news"] { --category-accent: #93c5fd; --category-tint: #102a4b; }
+.dark [data-category="world-news"] { --category-accent: #5eead4; --category-tint: #0d3535; }
+.dark [data-category="politics"] { --category-accent: #c4b5fd; --category-tint: #2e2054; }
+.dark [data-category="business"] { --category-accent: #6ee7b7; --category-tint: #10382f; }
+.dark [data-category="technology"] { --category-accent: #7dd3fc; --category-tint: #11344a; }
+.dark [data-category="health"] { --category-accent: #fda4af; --category-tint: #421b2a; }
+.dark [data-category="sports"] { --category-accent: #fdba74; --category-tint: #432719; }
+.dark [data-category="entertainment"] { --category-accent: #f0abfc; --category-tint: #3b2044; }
+.dark [data-category="education"] { --category-accent: #fcd34d; --category-tint: #3d3115; }
+.dark [data-category="opinion"] { --category-accent: #cbd5e1; --category-tint: #263548; }
+.dark [data-category="features"] { --category-accent: #a5b4fc; --category-tint: #252950; }
+.dark [data-category="investigations"] { --category-accent: #fca5a5; --category-tint: #401e25; }
+.dark [data-category="lifestyle"] { --category-accent: #f9a8d4; --category-tint: #431f35; }
+.dark [data-category="culture"] { --category-accent: #d8b4fe; --category-tint: #33204b; }
+.dark [data-category="weather"] { --category-accent: #fbbf24; --category-tint: #3e3014; }
+.dark [data-category="latest"] { --category-accent: #7cb4ff; --category-tint: #102b52; }
+.dark [data-category="trending"] { --category-accent: #fca5a5; --category-tint: #401e25; }
+.dark [data-category="editorials"] { --category-accent: #cbd5e1; --category-tint: #263548; }
+
+@media (min-width: 23.4375rem) {
+  .site-container { padding-inline: 1rem; }
+}
+
+@media (min-width: 45rem) {
+  .site-container { padding-inline: 1.5rem; }
+  .tablet-news-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Modern editorial scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.4);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.7);
+}
+
+/* Subtle selection styling */
+::selection {
+  background: rgba(37, 99, 235, 0.2);
+  color: inherit;
+}
+.dark ::selection {
+  background: rgba(96, 165, 250, 0.25);
+  color: inherit;
+}
+
+/* Smooth motion base */
+html {
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+}
+
+/* Glass & editorial surfaces */
+.editorial-card {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+}
+.editorial-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Live indicator pulse */
+@keyframes beacon-ping {
+  0% { transform: scale(1); opacity: 0.8; }
+  70% { transform: scale(2.2); opacity: 0; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+.animate-beacon {
+  animation: beacon-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Ticker marquee */
+@keyframes ticker-slide {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-ticker {
+  display: flex;
+  width: max-content;
+  animation: ticker-slide 35s linear infinite;
+}
+.animate-ticker:hover {
+  animation-play-state: paused;
+}
 
 /* Paginator wrapper */
 .p-paginator {
-  @apply flex items-center justify-between bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-4 py-2 text-sm;
+  @apply flex items-center justify-between bg-neutral-50 dark:bg-neutral-900 border-t border-neutral-200 dark:border-neutral-800 px-4 py-3 text-sm rounded-xl;
 }
 
 /* Page links (numbers, arrows) */
@@ -16,34 +233,28 @@
 .p-paginator .p-paginator-prev,
 .p-paginator .p-paginator-next,
 .p-paginator .p-paginator-last {
-  @apply px-2 py-1 rounded-md cursor-pointer text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700;
+  @apply px-3 py-1.5 rounded-lg cursor-pointer text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200/60 dark:hover:bg-neutral-800 transition-colors;
 }
 
 /* Active page */
 .p-paginator .p-paginator-page.p-highlight {
-  @apply font-semibold bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100;
+  @apply font-semibold bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-950;
 }
 
 /* Dropdown (rows per page) */
 .p-paginator .p-dropdown {
-  @apply ml-2 rounded-md bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-700;
+  @apply ml-2 rounded-lg bg-white dark:bg-neutral-900 text-neutral-800 dark:text-neutral-200 border border-neutral-200 dark:border-neutral-800 px-2 py-1;
 }
 
-/* Current page report text (e.g. Showing 1 to 5 of 9 articles) */
+/* Current page report text */
 .p-paginator .p-paginator-current {
-  @apply text-gray-700 dark:text-gray-300;
+  @apply text-neutral-500 dark:text-neutral-400 font-medium;
 }
 
-/* Dropdown label inside rows-per-page selector */
-.p-paginator .p-dropdown-label {
-  @apply text-gray-800 dark:text-gray-200;
-}
-
-/* Dropdown panel (when opened) */
 .p-dropdown-panel {
-  @apply bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700;
+  @apply bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-xl rounded-xl;
 }
 
 .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
-  @apply text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700;
+  @apply text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 px-3 py-1.5 rounded-md cursor-pointer transition-colors;
 }

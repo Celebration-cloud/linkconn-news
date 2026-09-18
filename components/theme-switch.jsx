@@ -8,14 +8,14 @@ import { useSwitch } from "@heroui/react";
 import { VisuallyHidden } from "@react-aria/visually-hidden";
 import clsx from "clsx";
 
-import { SunFilledIcon, MoonFilledIcon } from "@/components/icons";
+import { Moon, Sun } from "lucide-react";
 
 export const ThemeSwitch = ({ className, classNames }) => {
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
   const isSSR = useIsSSR();
 
   const onChange = () => {
-    theme === "light" ? setTheme("dark") : setTheme("light");
+    resolvedTheme === "light" ? setTheme("dark") : setTheme("light");
   };
 
   const {
@@ -26,8 +26,8 @@ export const ThemeSwitch = ({ className, classNames }) => {
     getInputProps,
     getWrapperProps,
   } = useSwitch({
-    isSelected: theme === "light" || isSSR,
-    "aria-label": `Switch to ${theme === "light" || isSSR ? "dark" : "light"} mode`,
+    isSelected: isSSR ? false : resolvedTheme === "light",
+    "aria-label": `Switch to ${resolvedTheme === "light" ? "dark" : "light"} mode`,
     onChange,
   });
 
@@ -49,9 +49,9 @@ export const ThemeSwitch = ({ className, classNames }) => {
         className={slots.wrapper({
           class: clsx(
             [
-              "w-auto h-auto",
+              "size-11",
               "bg-transparent",
-              "rounded-lg",
+              "rounded-xl",
               "flex items-center justify-center",
               "group-data-[selected=true]:bg-transparent",
               "!text-default-500",
@@ -64,9 +64,9 @@ export const ThemeSwitch = ({ className, classNames }) => {
         })}
       >
         {!isSelected || isSSR ? (
-          <SunFilledIcon size={22} />
+          <Sun className="size-5" strokeWidth={1.8} />
         ) : (
-          <MoonFilledIcon size={22} />
+          <Moon className="size-5" strokeWidth={1.8} />
         )}
       </div>
     </Component>

@@ -12,7 +12,6 @@ const nextConfig = {
         hostname: "**", // Allow any hostname (http)
       },
     ],
-    domains: ["fra.cloud.appwrite.io"],
   },
 };
 

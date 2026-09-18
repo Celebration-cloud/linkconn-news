@@ -5,6 +5,7 @@ import { SubscribeModal } from "@/components/shared/modals/SubscribeModal";
 import { siteConfig } from "@/config/site";
 import { Card, CardBody, CardHeader, Divider, Image } from "@heroui/react";
 import { motion } from "framer-motion";
+import { CategoryIcon } from "@/lib/category-themes";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -21,20 +22,20 @@ const staggerContainer = {
 
 export default function AboutPage() {
   return (
-    <div className="space-y-20 bg-gray-50 pb-24 dark:bg-gray-900 transition-colors duration-300">
+    <div className="space-y-16 bg-[var(--canvas)] pb-24 text-[var(--ink)] transition-colors min-[720px]:space-y-20">
       {/* Hero Section */}
       <motion.section
-        className="bg-gradient-to-r from-royalblue-600 to-cyan-500 text-white px-6 pt-24 text-center rounded-3xl shadow-2xl relative overflow-hidden"
+        className="relative overflow-hidden rounded-3xl bg-[#0b3474] px-3 pt-16 text-center text-white shadow-2xl min-[375px]:px-5 min-[720px]:px-6 min-[720px]:pt-24"
         initial="hidden"
         animate="visible"
         variants={fadeUp}
       >
         <div className="absolute -top-10 -left-10 w-80 h-80 bg-cyan-300 opacity-20 rounded-full animate-pulse"></div>
         <div className="absolute -bottom-10 -right-10 w-80 h-80 bg-blue-900 opacity-20 rounded-full animate-pulse"></div>
-        <h1 className="text-5xl md:text-6xl font-extrabold mb-6 drop-shadow-lg">
+        <h1 className="mb-6 text-[clamp(2.25rem,10vw,3.75rem)] font-extrabold leading-tight drop-shadow-lg">
           About Linkcon News
         </h1>
-        <p className="max-w-3xl mx-auto text-xl md:text-2xl opacity-90 leading-relaxed">
+        <p className="mx-auto max-w-3xl text-[clamp(1rem,4.5vw,1.5rem)] leading-relaxed opacity-90">
           Telling stories that shape Nigeria, Africa, and the world. Fast,
           accurate, and meaningful — every story deserves clarity.
         </p>
@@ -149,11 +150,13 @@ export default function AboutPage() {
             >
               <Card className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 p-6 rounded-3xl">
                 <CardHeader className="flex items-center gap-3 mb-4">
-                  <motion.i
-                    className={`pi pi-${item.icon} text-3xl text-royalblue-600 dark:text-cyan-400`}
+                  <motion.div
+                    className="text-[var(--brand)]"
                     whileHover={{ rotate: 15, scale: 1.2 }}
                     transition={{ type: "spring", stiffness: 300, damping: 15 }}
-                  />
+                  >
+                    <CategoryIcon category={item.title} className="size-8" />
+                  </motion.div>
                   <span className="text-xl font-bold text-gray-900 dark:text-gray-100">
                     {item.title}
                   </span>

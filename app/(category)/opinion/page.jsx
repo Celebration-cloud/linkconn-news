@@ -47,7 +47,6 @@ export default async function OpinionPage({ searchParams }) {
     <SectionLayout
       sectionColor="pink"
       sectionTitle="Opinion"
-      sectionIcon="pi-comment"
       sectionLink="/opinion"
       sectionUrlParams="opinion"
       ctaLabel="See all opinion"

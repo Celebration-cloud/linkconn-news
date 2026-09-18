@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function TermsOfServicePage() {
   return (
-    <section className="max-w-6xl mx-auto px-6 py-12 space-y-12 bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
+    <section className="site-container space-y-10 bg-[var(--canvas)] py-10 text-[var(--ink)] min-[720px]:space-y-12 min-[720px]:py-12">
       {/* Header */}
       <header className="text-center space-y-4">
         <h1 className="text-4xl md:text-5xl font-extrabold text-blue-600 dark:text-blue-400">
@@ -43,7 +43,7 @@ export default function TermsOfServicePage() {
             2. User Responsibilities
           </h2>
           <ul className="list-disc pl-6 space-y-2">
-            <li>Provide accurate information when creating accounts.</li>
+            <li>Provide accurate information when contacting our newsroom.</li>
             <li>
               Avoid posting content that is illegal, defamatory, or harmful.
             </li>

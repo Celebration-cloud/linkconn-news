@@ -2,42 +2,19 @@
 /* eslint-disable react/react-in-jsx-scope */
 "use client";
 
-import { useEffect, useState } from "react";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
-  Input,
-} from "@heroui/react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
-import { Logo, MailIcon } from "@/components/icons";
 import { showToast } from "@/utils/toast";
+import { Check, X } from "lucide-react";
 
 export const SubscribeModal = ({
   title = "Subscribe",
-  className = "bg-yellow-400 text-black font-semibold",
-  ...props
+  className = "bg-neutral-900 text-white dark:bg-white dark:text-neutral-950 font-semibold px-4 py-1.5 rounded-full text-xs shadow-sm hover:opacity-90 active:scale-95 transition-all",
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
-useEffect(() => {
-  const subscribed = localStorage.getItem("subscribed");
-  const lastShown = localStorage.getItem("subscribe-last-shown");
-  const now = Date.now();
-
-  // Only open if not subscribed and 1 hour has passed since last show
-  if (!subscribed && (!lastShown || now - parseInt(lastShown, 10) > 3600000)) {
-    const timer = setTimeout(() => setIsOpen(true), 3000);
-    localStorage.setItem("subscribe-last-shown", now.toString());
-    return () => clearTimeout(timer);
-  }
-}, []);
-
-
-  // React Hook Form setup
   const {
     register,
     handleSubmit,
@@ -47,114 +24,129 @@ useEffect(() => {
     defaultValues: { email: "" },
   });
 
-  const onSubmit = async (data) => {
-    try {
-      const res = await fetch("/api/public/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: data.email }),
-      });
-
-      const result = await res.json();
-
-      if (result.success) {
-        showToast({
-          color: "success",
-          description: "You're subscribed! Check your inbox for updates.",
-          title: "Success",
-        });
-        reset();
-        setIsOpen(false);
-      } else {
-        showToast({
-          color: "danger",
-          description:
-            "Subscription failed. Try again later: " +
-            (result.error || "Unknown error"),
-          title: "Error",
-        });
-      }
-    } catch (err) {
-      showToast({
-        color: "danger",
-        description:
-          "Something went wrong. Please try again later: " + err.message,
-        title: "Error",
-      });
-    }
+  const onSubmit = (data) => {
+    const subject = encodeURIComponent("Linkcon Dispatch subscription request");
+    const body = encodeURIComponent(`Please add ${data.email} to the Linkcon Dispatch mailing list.`);
+    window.location.href = `mailto:contact@linkconnews.com?subject=${subject}&body=${body}`;
+    setIsSuccess(true);
+    showToast({
+      title: "Email app opened",
+      description: "Send the prepared email to request your subscription.",
+      color: "success",
+    });
+    setTimeout(() => {
+      setIsSuccess(false);
+      setIsOpen(false);
+      reset();
+    }, 1800);
   };
 
   return (
     <>
-      {/* Manual trigger button */}
-      <Button {...props} className={className} onPress={() => setIsOpen(true)}>
+      <button onClick={() => setIsOpen(true)} className={className}>
         {title}
-      </Button>
+      </button>
 
-      {/* Modal */}
-      <Modal
-        isOpen={isOpen}
-        onOpenChange={setIsOpen}
-        size="md"
-        placement="center"
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col items-center gap-2">
-                <Logo height={50} width={120} />
-                <h2 className="text-xl font-bold">
-                  Subscribe to Our Newsletter
-                </h2>
-                <p className="text-sm text-gray-500 text-center">
-                  Get the latest news, insights, and stories from LinkOn News.
-                </p>
-              </ModalHeader>
+      <AnimatePresence>
+        {isOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsOpen(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+            />
 
-              <ModalBody>
-                <form
-                  onSubmit={handleSubmit(onSubmit)}
-                  className="flex flex-col gap-4"
-                >
-                  <Input
-                    type="email"
-                    label="Email Address"
-                    placeholder="Enter your email"
-                    {...register("email", {
-                      required: "Email is required",
-                      pattern: {
-                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                        message: "Invalid email address",
-                      },
-                    })}
-                    fullWidth
-                    endContent={<MailIcon className="text-2xl" />}
-                    isInvalid={!!errors.email}
-                    errorMessage={errors.email?.message}
-                  />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              transition={{ type: "spring", stiffness: 450, damping: 30 }}
+              className="relative w-full max-w-md overflow-hidden rounded-2xl border border-neutral-200/80 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6 shadow-2xl z-10"
+            >
+              {/* Close X */}
+              <button
+                onClick={() => setIsOpen(false)}
+                className="absolute top-4 right-4 text-neutral-400 hover:text-neutral-900 dark:hover:text-white p-1 transition-colors"
+                aria-label="Close"
+              >
+                <X className="size-5" />
+              </button>
 
-                  <ModalFooter className="flex justify-end gap-2 mt-4">
-                    <Button
-                      variant="light"
-                      onPress={onClose}
-                      disabled={isSubmitting}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      type="submit"
-                      className="bg-yellow-400 text-black font-semibold"
-                      isLoading={isSubmitting}
-                    >
-                      Subscribe
-                    </Button>
-                  </ModalFooter>
-                </form>
-              </ModalBody>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+              {isSuccess ? (
+                <div className="py-8 text-center space-y-3">
+                  <div className="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center mx-auto">
+                    <Check className="size-6" />
+                  </div>
+                  <h3 className="font-serif text-lg font-bold text-neutral-900 dark:text-white">
+                    Your email is ready
+                  </h3>
+                  <p className="text-xs text-neutral-500">
+                    Send the prepared message from your email app to complete the request.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="space-y-1">
+                    <span className="text-xs font-bold uppercase tracking-widest text-neutral-400">
+                      Linkcon Dispatch
+                    </span>
+                    <h3 className="text-xl font-serif font-bold text-neutral-900 dark:text-white">
+                      Morning World Briefing
+                    </h3>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">
+                      Hand-curated global news, economic updates, and investigative stories delivered every morning at 06:00 GMT.
+                    </p>
+                  </div>
+
+                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 pt-2">
+                    <div>
+                      <input
+                        type="email"
+                        placeholder="your.email@organization.com"
+                        {...register("email", {
+                          required: "Email is required",
+                          pattern: {
+                            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                            message: "Valid email address required",
+                          },
+                        })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 text-sm text-neutral-900 dark:text-white placeholder:text-neutral-400 outline-none focus:border-neutral-900 dark:focus:border-white transition-colors"
+                      />
+                      {errors.email && (
+                        <p className="mt-1 text-xs font-medium text-rose-600 dark:text-rose-300">
+                          {errors.email.message}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-end gap-2 pt-2">
+                      <button
+                        type="button"
+                        onClick={() => setIsOpen(false)}
+                        className="px-4 py-2 rounded-xl text-xs font-semibold text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="px-5 py-2 rounded-xl text-xs font-semibold bg-neutral-900 text-white dark:bg-white dark:text-neutral-950 hover:opacity-90 active:scale-95 disabled:opacity-50 transition-all flex items-center gap-2"
+                      >
+                        {isSubmitting && (
+                          <span className="w-3 h-3 rounded-full border-2 border-current border-t-transparent animate-spin" />
+                        )}
+                        <span>Request subscription</span>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </>
   );
 };

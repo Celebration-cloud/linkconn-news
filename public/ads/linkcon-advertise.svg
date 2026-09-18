@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 728 180" role="img" aria-labelledby="title desc">
+  <title id="title">Linkcon advertising creative</title>
+  <desc id="desc">Abstract blue newsroom grid with a focused spotlight</desc>
+  <defs>
+    <radialGradient id="glow" cx="72%" cy="35%" r="65%">
+      <stop offset="0" stop-color="#6ea8fe" stop-opacity=".92"/>
+      <stop offset=".48" stop-color="#1857bd" stop-opacity=".62"/>
+      <stop offset="1" stop-color="#071a3a" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="34" height="34" patternUnits="userSpaceOnUse">
+      <path d="M34 0H0v34" fill="none" stroke="#9ac2ff" stroke-opacity=".14"/>
+    </pattern>
+  </defs>
+  <rect width="728" height="180" rx="22" fill="#071a3a"/>
+  <rect width="728" height="180" rx="22" fill="url(#glow)"/>
+  <rect width="728" height="180" rx="22" fill="url(#grid)"/>
+  <circle cx="620" cy="24" r="82" fill="#fff" opacity=".06"/>
+  <circle cx="660" cy="150" r="118" fill="#2b79ed" opacity=".18"/>
+</svg>

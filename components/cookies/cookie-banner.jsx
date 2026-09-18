@@ -1,8 +1,10 @@
 /* eslint-disable react/react-in-jsx-scope */
 "use client";
+
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@heroui/react";
+import NextLink from "next/link";
+import { Cookie } from "lucide-react";
 
 export const CookieBanner = () => {
   const [mounted, setMounted] = useState(false);
@@ -14,63 +16,53 @@ export const CookieBanner = () => {
     if (consent === "true") setAccepted(true);
   }, []);
 
-  const acceptCookies = async () => {
+  const acceptCookies = () => {
     localStorage.setItem("cookie-consent", "true");
     setAccepted(true);
-    await fetch("/api/public/cookies/init", { method: "POST" });
   };
 
-  if (!mounted) return null;
+  if (!mounted || accepted) return null;
 
   return (
     <AnimatePresence>
-      {!accepted && (
-        <motion.div
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 100, opacity: 0 }}
-          transition={{ duration: 0.4 }}
-          className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[95%] sm:w-[600px] bg-neutral-900 text-gray-100 rounded-xl shadow-xl p-5 z-50 border border-neutral-700"
-        >
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-            <div className="space-y-2 sm:w-3/4">
-              <h3 className="font-semibold text-white text-base">
-                Your privacy matters
-              </h3>
-              <p className="text-sm text-gray-300 leading-snug">
-                We use cookies to personalize content, analyze site traffic, and
-                deliver relevant stories on LinkOn News. By accepting, you agree
-                to our use of cookies as described in our{" "}
-                <a
-                  href="/privacy"
-                  className="text-blue-400 underline hover:text-blue-300"
-                >
-                  Privacy Policy
-                </a>
-                .
-              </p>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-2 sm:mt-1 sm:w-1/4 justify-end">
-              <Button
+      <motion.div
+        initial={{ y: 80, opacity: 0, scale: 0.98 }}
+        animate={{ y: 0, opacity: 1, scale: 1 }}
+        exit={{ y: 80, opacity: 0, scale: 0.98 }}
+        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+        className="fixed inset-x-3 bottom-3 z-50 rounded-2xl border border-[var(--line)] bg-[var(--surface)]/95 p-4 shadow-2xl backdrop-blur-xl min-[375px]:inset-x-4 sm:inset-x-auto sm:bottom-6 sm:right-6 sm:max-w-md"
+      >
+        <div className="flex items-start gap-3">
+          <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-[var(--surface-raised)] text-[var(--brand)]">
+            <Cookie className="size-5" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h4 className="mb-1 text-sm font-bold text-[var(--ink)]">
+              Privacy & Cookies
+            </h4>
+            <p className="site-muted mb-3 text-xs leading-relaxed">
+              We utilize essential telemetry to personalize world news dispatches and measure audience engagement. Learn more in our{" "}
+              <NextLink href="/policy" className="underline hover:text-neutral-900 dark:hover:text-white">
+                Privacy Policy
+              </NextLink>.
+            </p>
+            <div className="flex flex-col gap-2 min-[375px]:flex-row min-[375px]:items-center">
+              <button
                 onClick={acceptCookies}
-                size="sm"
-                className="bg-blue-600 hover:bg-blue-700 text-white w-full"
+                className="min-h-11 rounded-lg bg-[var(--brand-fill)] px-4 text-xs font-semibold text-white transition-all hover:bg-[var(--brand-fill-hover)] active:scale-95"
               >
-                Accept
-              </Button>
-              <Button
-                as="a"
-                href="/policy"
-                size="sm"
-                variant="flat"
-                className="text-gray-300 hover:text-white border border-gray-700 w-full"
+                Accept All
+              </button>
+              <button
+                onClick={acceptCookies}
+                className="min-h-11 rounded-lg px-3 text-xs font-medium text-[var(--ink-muted)] transition-colors hover:bg-[var(--surface-raised)] hover:text-[var(--ink)]"
               >
-                Learn more
-              </Button>
+                Decline Non-Essential
+              </button>
             </div>
           </div>
-        </motion.div>
-      )}
+        </div>
+      </motion.div>
     </AnimatePresence>
   );
 };

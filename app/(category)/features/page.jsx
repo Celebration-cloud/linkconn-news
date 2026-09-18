@@ -44,7 +44,6 @@ export default async function FeaturesPage({ searchParams }) {
     <SectionLayout
       sectionColor="blue"
       sectionTitle="Features"
-      sectionIcon="pi-bookmark"
       sectionLink="/features"
       sectionUrlParams="features"
       ctaLabel="See all features"

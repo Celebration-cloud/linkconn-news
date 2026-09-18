@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 500" role="img" aria-labelledby="title desc">
+  <title id="title">Linkcon latest news creative</title>
+  <desc id="desc">Layered blue editorial pages representing current news</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#08172e"/>
+      <stop offset="1" stop-color="#124b9c"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="500" rx="36" fill="url(#bg)"/>
+  <circle cx="510" cy="52" r="150" fill="#71aafd" opacity=".17"/>
+  <g transform="translate(92 82) rotate(-5 210 160)">
+    <rect x="30" y="28" width="380" height="300" rx="20" fill="#0c2c5c" opacity=".72"/>
+    <rect width="380" height="300" rx="20" fill="#f4f8ff"/>
+    <rect x="30" y="32" width="116" height="18" rx="9" fill="#1d4ed8"/>
+    <rect x="30" y="78" width="320" height="20" rx="10" fill="#0c1b33"/>
+    <rect x="30" y="112" width="272" height="12" rx="6" fill="#71839c"/>
+    <rect x="30" y="144" width="142" height="116" rx="14" fill="#c9dcfb"/>
+    <rect x="192" y="144" width="158" height="12" rx="6" fill="#365a8c"/>
+    <rect x="192" y="172" width="132" height="12" rx="6" fill="#8294ad"/>
+    <rect x="192" y="200" width="150" height="12" rx="6" fill="#8294ad"/>
+  </g>
+</svg>

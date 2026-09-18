@@ -11,47 +11,34 @@ import {
   Divider,
 } from "@heroui/react";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
 // import Link from "next/link";
 import { showToast } from "@/utils/toast";
+import { Mail, MapPin, Phone } from "lucide-react";
 
 export default function ContactPage() {
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm();
 
-  const [status, setStatus] = useState(null);
-
-  const onSubmit = async (data) => {
-    try {
-      setStatus("sending");
-      const res = await fetch("/api/public/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      const result = await res.json();
-
-      if (result.success) {
-        setStatus("success");
-        showToast({ title: "success", description: "Message sent successfully!", color: "success" });
-        reset();
-      } else {
-        setStatus("error");
-        showToast({ title: "error", description: "Failed to send message. Try again later.", color: "danger" });
-      }
-    } catch (err) {
-      setStatus("error");
-      showToast({ title: "error", description: "Failed to send message. Try again later."+err, color: "danger" });
-    }
+  const onSubmit = (data) => {
+    const subject = encodeURIComponent(data.subject);
+    const body = encodeURIComponent(
+      `Name: ${data.name}\nEmail: ${data.email}\n\n${data.message}`
+    );
+    window.location.href = `mailto:contact@linkconnews.com?subject=${subject}&body=${body}`;
+    showToast({
+      title: "Email app opened",
+      description: "Review and send your message from your email app.",
+      color: "success",
+    });
+    reset();
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-12 space-y-12">
+    <div className="site-container space-y-12 py-10 min-[720px]:py-12">
       {/* Header */}
       <div className="text-center space-y-4">
         <h1 className="text-4xl font-bold text-blue-500">Contact Us</h1>
@@ -123,13 +110,10 @@ export default function ContactPage() {
 
               <Button
                 type="submit"
-                disabled={isSubmitting}
                 className="bg-blue-600 text-white w-full"
                 size="lg"
               >
-                {isSubmitting
-                  ? "Sending..."
-                  : status === "success" && "Send Message"}
+                Open Email App
               </Button>
             </form>
           </CardBody>
@@ -140,7 +124,7 @@ export default function ContactPage() {
           <Card className="shadow-md dark:bg-gray-900">
             <CardBody className="space-y-6">
               <div className="flex items-start gap-4">
-                <i className="pi pi-map-marker text-blue-600 text-2xl"></i>
+                <MapPin className="size-6 shrink-0 text-[var(--brand)]" />
                 <div>
                   <h3 className="font-semibold text-lg text-blue-500">
                     Office Address
@@ -152,7 +136,7 @@ export default function ContactPage() {
               </div>
 
               <div className="flex items-start gap-4">
-                <i className="pi pi-phone text-blue-500 text-2xl"></i>
+                <Phone className="size-6 shrink-0 text-[var(--brand)]" />
                 <div>
                   <h3 className="font-semibold text-lg text-blue-500">Phone</h3>
                   <p className="text-gray-600 dark:text-gray-300">
@@ -162,7 +146,7 @@ export default function ContactPage() {
               </div>
 
               <div className="flex items-start gap-4">
-                <i className="pi pi-envelope text-blue-500 text-2xl"></i>
+                <Mail className="size-6 shrink-0 text-[var(--brand)]" />
                 <div>
                   <h3 className="font-semibold text-lg text-blue-500">Email</h3>
                   <p className="text-gray-600 dark:text-gray-300">

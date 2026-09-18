@@ -1,25 +1,40 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react/react-in-jsx-scope */
-"use client";
 import SectionLayout from "@/components/shared/news-layout/SectionLayout";
+import { getArticles } from "@/lib/actions/getArticles";
 
-// Demo data
-const demoLatest = Array.from({ length: 52 }).map((_, i) => ({
-  id: i + 1,
-  title: `Latest Headline ${i + 1}`,
-  date: "2025-08-28",
-  summary: "This is a demo summary for the latest article.",
-  image: "https://via.placeholder.com/800x400",
-}));
+export default async function LatestPage({ searchParams }) {
+  const sp = await searchParams;
+  const page = parseInt(sp?.page || "1", 10);
+  const limit = 12;
+  const offset = (page - 1) * limit;
 
-export default function LatestPage() {
+  const { documents = [], total = 0 } = await getArticles({
+    limit,
+    offset,
+  });
+
+  const mappedArticles = documents.map((a) => ({
+    ...a,
+    id: a.$id || a.id,
+    title: a.title,
+    slug: a.slug,
+    summary: a.summary,
+    date: a.$createdAt || a.publishedAt,
+    image: a.cover,
+    author: a.authorName,
+    section: a.section || a.newsSection || "Latest",
+  }));
+
   return (
     <SectionLayout
-      sectionColor="green"
-      sectionTitle="Latest"
-      sectionIcon="pi-clock"
+      sectionTitle="Latest Dispatches"
       sectionLink="/latest"
-      ctaLabel="See all latest news"
-      demoData={demoLatest}
+      ctaLabel="Latest stories"
+      articleData={mappedArticles}
+      limit={limit}
+      totalCount={total}
+      currentPage={page}
     />
   );
 }

@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Input, Kbd, Spinner } from "@heroui/react";
-import { SearchIcon } from "@/components/icons";
+import { Search } from "lucide-react";
 import { getArticles } from "@/lib/actions/getArticles";
 import Link from "next/link";
 
@@ -47,7 +47,7 @@ export default function SearchBar() {
         placeholder="Search Linkcon News..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        startContent={<SearchIcon className="text-default-400" />}
+        startContent={<Search className="size-4 text-[var(--ink-muted)]" />}
         endContent={
           loading ? (
             <Spinner size="sm" />
